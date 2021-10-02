@@ -8,8 +8,8 @@ This project was built to help project managers handle multiple projects at once
 
 ### Key Features:
 
--   [ ] Register
--   [ ] Login
+-   [x] Register
+-   [x] Login
 -   [ ] Dashboard
     -   [ ] Projects
         -   [ ] Overview
