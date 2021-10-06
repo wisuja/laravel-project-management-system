@@ -45,3 +45,4 @@ This project was built to help project managers handle multiple projects at once
     -   [ ] Skill mapping
         -   [ ] EXP
 -   [ ] Notification
+-   [ ] Activities
