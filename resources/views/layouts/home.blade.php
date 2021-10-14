@@ -11,3 +11,7 @@
 @section('content')
   @yield('_content')
 @endsection
+
+@section('scripts')
+  @yield('_scripts')
+@endsection

@@ -11,6 +11,7 @@ This project was built to help project managers handle multiple projects at once
 -   [x] Register
 -   [x] Login
 -   [ ] Dashboard
+    -   [ ] Assigned to me
     -   [ ] Projects
         -   [ ] Overview
             -   [ ] Latest Task
@@ -33,6 +34,8 @@ This project was built to help project managers handle multiple projects at once
                     -   [ ] Assigned To
                     -   [ ] Time
                         -   [ ] Estimate time by AI
+                            -   Difficulty
+                            -   Number of people
                     -   [ ] Label
                         -   [ ] Skill mapping
                     -   [ ] Attachment

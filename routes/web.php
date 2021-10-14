@@ -23,4 +23,8 @@ Auth::routes([
 Route::get('/', function () {
     return redirect()->route('login');
 });
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::post('/ajax', [HomeController::class, 'store'])->name('ajax');
+});
