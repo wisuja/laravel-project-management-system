@@ -25,7 +25,7 @@
     <div id="app">
         @yield('nav')
         @yield('content')
-        @yield('scripts')
+        @yield('scripts') 
     </div>
 </body>
 </html>

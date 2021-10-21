@@ -1,6 +1,6 @@
 # Project Management System
 
-### Built using Laravel, Vue, and Flask
+### Built using Laravel, JQuery and Flask
 
 ---
 

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +16,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $recentProjects = Project::latest()->take(3)->get();
-
-        return view('pages.user.home', compact('recentProjects'));
+        //
     }
 
     /**
@@ -35,20 +35,30 @@ class HomeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProjectRequest $request)
     {
-        //
+        [$from, $to] = explode(' - ', $request->duration);
+        
+        $project = Project::create([
+            'name' => $request->name,
+            'code' => $request->code,
+            'from' => Carbon::parse($from)->format('Y-m-d'),
+            'to' => Carbon::parse($to)->format('Y-m-d'),
+            'created_by' => auth()->id()    
+        ]);
+
+        return redirect()->route('projects.show', ['project' => $project]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param \App\Models\Project $project
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Project $project)
     {
-        //
+        return view('pages.user.projects-show', compact('project'));
     }
 
     /**
