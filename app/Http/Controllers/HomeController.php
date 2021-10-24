@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -14,7 +15,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $recentProjects = Project::latest()->take(3)->get();
+        $recentProjects = Cache::rememberForever('recent-projects', function () {
+            return Project::latest()->take(3)->get();
+        });
 
         return view('pages.user.home', compact('recentProjects'));
     }

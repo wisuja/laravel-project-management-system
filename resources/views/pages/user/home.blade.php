@@ -21,7 +21,7 @@
         <div class="row">
             @foreach ($recentProjects as $project)
                 <div class="col-4">
-                    <a href="#">
+                    <a href="{{ route('projects.show', ['project' => $project]) }}">
                         <div class="card">
                             <img class="card-img" src="https://mdbcdn.b-cdn.net/img/Photos/Others/intro1.jpg">
                             <div class="card-img-overlay">
@@ -34,7 +34,7 @@
         </div>
         <div class="row mt-1">
             <div class="col-12">
-                <a href="#" class="text-primary">See All Projects</a>
+                <a href="{{ route('projects.index') }}" class="text-primary">See All Projects</a>
             </div>
         </div>
         <div class="row mt-5">

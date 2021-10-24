@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProjectController extends Controller
 {
@@ -16,7 +19,29 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        if (request()->ajax()) {
+            $projects = Project::with(['manager'])->orderBy('is_starred', 'desc')->get();
+
+            return DataTables::of($projects)
+                                ->addColumn('star', function ($row) {
+                                    $star = '<span role="button" id="star-' . $row->id . '" onclick="toggleStar(' . $row->id . ')">';
+                                    $star .= '<i class="' . ($row->is_starred ? 'fas text-warning' : 'far text-dark') . ' fa-star"></i>';
+                                    $star .= '</span>';  
+                                    
+                                    return $star;
+                                })
+                                ->addColumn('action', function ($row) {
+                                    $action = '<button class="btn btn-light">';
+                                    $action .= '<i class="fas fa-ellipsis-h"></i>';
+                                    $action .= '</button>';
+                                    
+                                    return $action;
+                                })
+                                ->rawColumns(['star', 'action'])
+                                ->make(true);
+        }
+
+        return view('pages.user.projects-index');
     }
 
     /**
@@ -44,8 +69,11 @@ class ProjectController extends Controller
             'code' => $request->code,
             'from' => Carbon::parse($from)->format('Y-m-d'),
             'to' => Carbon::parse($to)->format('Y-m-d'),
+            'project_manager' => auth()->id(),
             'created_by' => auth()->id()    
         ]);
+
+        $project->members()->attach(auth()->id());
 
         return redirect()->route('projects.show', ['project' => $project]);
     }
@@ -58,6 +86,17 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        $recentProjects = Cache::pull('recent-projects');
+
+        if (!$recentProjects)
+            $recentProjects = Project::latest()->take(3)->get();
+        else 
+            $recentProjects = $recentProjects->prepend($project)->unique()->splice(0, 3);
+        
+        Cache::rememberForever('recent-projects', function () use ($recentProjects) {
+            return $recentProjects;
+        });
+
         return view('pages.user.projects-show', compact('project'));
     }
 
@@ -76,12 +115,24 @@ class ProjectController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProjectRequest $request)
     {
-        //
+        if ($request->ajax()) {
+            $updateArray = [];
+            foreach ($request->validated() as $key => $value) {
+                if ($key != 'id')
+                    $updateArray[$key] = $value;
+            }
+
+            $affectedRow = Project::whereId($request->id)->update($updateArray);
+
+            if ($affectedRow)
+                return response('Update success', 200);
+            else 
+                return response('Failed to update', 400);
+        }
     }
 
     /**

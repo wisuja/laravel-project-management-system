@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ProjectSeeder extends Seeder
@@ -14,6 +15,11 @@ class ProjectSeeder extends Seeder
      */
     public function run()
     {
-        Project::factory(10)->create();
+        $projects = Project::factory(10)->create();
+
+        foreach ($projects as $project) {
+            $user = User::factory()->create();
+            $project->members()->attach($user->id);
+        }
     }
 }

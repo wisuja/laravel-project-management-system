@@ -10,6 +10,7 @@
 
 @section('content')
   @yield('_content')
+  @include('partials.footer')
 
   @include('partials.user.create-project-modal')
 @endsection

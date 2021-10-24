@@ -24,8 +24,15 @@
                         Projects
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Recent Projects</a>
-                        <a class="dropdown-item" href="#">All Projects</a>
+                        <a class="dropdown-item" href="#">Recent Project</a>
+                        @isset($mostRecentProject)
+                            <a href="{{ route('projects.show', ['project' => $mostRecentProject]) }}" class="dropdown-item">
+                                <i class="fas fa-chevron-right mr-1"></i>
+                                {{ $mostRecentProject->name }}
+                            </a>
+                            <div class="dropdown-divider"></div>
+                        @endisset
+                        <a class="dropdown-item" href="{{ route('projects.index') }}">All Projects</a>
                     </div>
                 </li>
                 <li class="nav-item d-flex align-items-center">
@@ -70,6 +77,7 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right">
+                        <a href="#" class="dropdown-item">Profile</a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">

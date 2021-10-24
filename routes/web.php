@@ -29,7 +29,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::prefix('projects')->name('projects.')->group(function () {
+        Route::get('/', [ProjectController::class, 'index'])->name('index');
         Route::get('/{project}', [ProjectController::class, 'show'])->name('show');
         Route::post('/', [ProjectController::class, 'store'])->name('store');
+        Route::put('/', [ProjectController::class, 'update'])->name('update');
     });
 });

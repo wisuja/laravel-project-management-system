@@ -17083,3 +17083,12 @@ readers do not read off random characters that represent icons */
   margin-bottom: 0;
   word-wrap: break-word;
 }
+
+html,
+body {
+  height: 100%;
+}
+
+#sidebar {
+  min-height: calc(100vh - 3.5rem);
+}

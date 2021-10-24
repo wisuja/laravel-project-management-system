@@ -10,6 +10,7 @@
 
 @section('content')
   @yield('_content')
+  @include('partials.footer')
 @endsection
 
 @section('scripts')
