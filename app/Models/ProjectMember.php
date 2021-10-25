@@ -17,7 +17,7 @@ class ProjectMember extends Pivot
         return $this->belongsTo(User::class);
     }
 
-    public function lead () {
+    public function leader () {
         return $this->belongsTo(User::class, 'lead', 'id');
     }
 }

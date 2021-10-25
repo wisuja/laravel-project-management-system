@@ -21,7 +21,7 @@ class ProjectController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $projects = ProjectMember::with(['project', 'lead'])->where('user_id', auth()->id())->get();
+            $projects = ProjectMember::with(['project', 'leader'])->where('user_id', auth()->id())->get();
 
             return DataTables::of($projects)
                                 ->addColumn('star', function ($row) {
@@ -31,14 +31,29 @@ class ProjectController extends Controller
                                     
                                     return $star;
                                 })
+                                ->addColumn('name', function ($row) {
+                                    $name = '<a href="' . route('projects.show', ['project' => $row->project]) . '">' . $row->project->name . '</a>';
+
+                                    return $name;
+                                })
+                                ->addColumn('leader', function ($row) {
+                                    $name = '<a href="#">' . $row->leader->name . '</a>';
+
+                                    return $name;
+                                })
                                 ->addColumn('action', function ($row) {
-                                    $action = '<button class="btn btn-light">';
+                                    $action = '<div class="dropdown">';
+                                    $action .= '<button class="btn btn-light" type="button" data-toggle="dropdown">';
                                     $action .= '<i class="fas fa-ellipsis-h"></i>';
                                     $action .= '</button>';
+                                    $action .= '<div class="dropdown-menu">';
+                                    $action .= '<a href="#" class="dropdown-item" onclick="remove(' . $row->project->id . ')">Delete</a>';
+                                    $action .= '</div>';
+                                    $action .= '</div>';
                                     
                                     return $action;
                                 })
-                                ->rawColumns(['star', 'action'])
+                                ->rawColumns(['star', 'name', 'leader', 'action'])
                                 ->make(true);
         }
 
@@ -138,11 +153,14 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        Project::whereId($id)->delete();
+
+        if (request()->ajax())
+            return response('Delete success', 200);
     }
 }

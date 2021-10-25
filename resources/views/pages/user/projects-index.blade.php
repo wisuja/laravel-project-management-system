@@ -56,6 +56,26 @@
       })
     }
 
+    function remove (id) {
+      $.ajax({
+        url: '/projects/' + id,
+        method: 'POST',
+        data: {
+          _token: '{{ csrf_token() }}',
+          _method: 'DELETE',
+          id
+        },
+        success: function (response) {
+          console.log(response);
+          window.location.reload();
+        },
+        error: function (error) {
+          console.log(error);
+          window.location.reload();
+        }
+      })
+    }
+
     $(function () {
       $('#star-all').on('click', function () {
         $('#star-all i').toggleClass('far fas text-dark text-warning');
@@ -72,9 +92,9 @@
         ajax: '{{ route("projects.index") }}',
         columns: [
           {data: 'star'},
-          {data: 'project.name'},
+          {data: 'name'},
           {data: 'project.code'},
-          {data: 'lead.name'},
+          {data: 'leader'},
           {data: 'action'}
         ],
         columnDefs: [{

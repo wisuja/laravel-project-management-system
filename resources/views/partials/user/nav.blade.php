@@ -36,7 +36,7 @@
                     </div>
                 </li>
                 <li class="nav-item d-flex align-items-center">
-                    <a href="#" class="btn btn-primary btn-sm" role="button" data-toggle="modal" data-target="#createProjectModal">Create Project</a>
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createProjectModal">Create Project</button>
                 </li>
             </ul>
 
