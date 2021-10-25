@@ -20,12 +20,9 @@ class CreateProjectsTable extends Migration
             $table->char('code', 3);
             $table->date('from');
             $table->date('to');
-            $table->boolean('is_starred')->default(false);
-            $table->unsignedBigInteger('project_manager')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
 
-            $table->foreign('project_manager')->references('id')->on('users')->onDelete('set null');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\ProjectMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,7 +17,9 @@ class HomeController extends Controller
     public function index()
     {
         $recentProjects = Cache::rememberForever('recent-projects', function () {
-            return Project::latest()->take(3)->get();
+            return Project::whereHas('members', function ($query) {
+                                $query->where('user_id', auth()->id());
+                            })->get();
         });
 
         return view('pages.user.home', compact('recentProjects'));

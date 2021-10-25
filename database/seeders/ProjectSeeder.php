@@ -19,7 +19,9 @@ class ProjectSeeder extends Seeder
 
         foreach ($projects as $project) {
             $user = User::factory()->create();
-            $project->members()->attach($user->id);
+            $project->members()->attach($user->id, [
+                'lead' => $user->id
+            ]);
         }
     }
 }

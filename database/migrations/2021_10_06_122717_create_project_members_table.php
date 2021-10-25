@@ -16,9 +16,12 @@ class CreateProjectMembersTable extends Migration
         Schema::create('project_members', function (Blueprint $table) {
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('lead')->nullable();
+            $table->boolean('is_starred')->default(false);
 
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('lead')->references('id')->on('users')->onDelete('set null');
 
             $table->primary(['project_id', 'user_id']);
         });

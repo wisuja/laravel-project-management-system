@@ -4,8 +4,54 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "030fea35bfa1f2ae734fb2c0d0e900aa",
+    "content-hash": "becdbb10addefd87bfaa37587c603af6",
     "packages": [
+        {
+            "name": "ajcastro/eager-load-pivot-relations",
+            "version": "v0.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ajcastro/eager-load-pivot-relations.git",
+                "reference": "55ffe9423d538aa5a0d35ddbb335556f6fe3fdfa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ajcastro/eager-load-pivot-relations/zipball/55ffe9423d538aa5a0d35ddbb335556f6fe3fdfa",
+                "reference": "55ffe9423d538aa5a0d35ddbb335556f6fe3fdfa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AjCastro\\EagerLoadPivotRelations\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjon Jason Castro",
+                    "email": "ajcastro29@gmail.com"
+                }
+            ],
+            "description": "Eager load pivot relations for Laravel Eloquent's BelongsToMany relation.",
+            "support": {
+                "issues": "https://github.com/ajcastro/eager-load-pivot-relations/issues",
+                "source": "https://github.com/ajcastro/eager-load-pivot-relations/tree/v0.2.2"
+            },
+            "time": "2019-09-25T00:08:16+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "v2.0.3",

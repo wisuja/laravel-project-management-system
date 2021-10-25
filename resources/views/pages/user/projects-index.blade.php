@@ -72,9 +72,9 @@
         ajax: '{{ route("projects.index") }}',
         columns: [
           {data: 'star'},
-          {data: 'name'},
-          {data: 'code'},
-          {data: 'manager.name'},
+          {data: 'project.name'},
+          {data: 'project.code'},
+          {data: 'lead.name'},
           {data: 'action'}
         ],
         columnDefs: [{

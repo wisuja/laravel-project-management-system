@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\ProjectMember;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -20,12 +21,12 @@ class ProjectController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $projects = Project::with(['manager'])->orderBy('is_starred', 'desc')->get();
+            $projects = ProjectMember::with(['project', 'lead'])->where('user_id', auth()->id())->get();
 
             return DataTables::of($projects)
                                 ->addColumn('star', function ($row) {
-                                    $star = '<span role="button" id="star-' . $row->id . '" onclick="toggleStar(' . $row->id . ')">';
-                                    $star .= '<i class="' . ($row->is_starred ? 'fas text-warning' : 'far text-dark') . ' fa-star"></i>';
+                                    $star = '<span role="button" id="star-' . $row->project->id . '" onclick="toggleStar(' . $row->project->id . ')">';
+                                    $star .= '<i class="' . ($row->project->is_starred ? 'fas text-warning' : 'far text-dark') . ' fa-star"></i>';
                                     $star .= '</span>';  
                                     
                                     return $star;
@@ -69,11 +70,10 @@ class ProjectController extends Controller
             'code' => $request->code,
             'from' => Carbon::parse($from)->format('Y-m-d'),
             'to' => Carbon::parse($to)->format('Y-m-d'),
-            'project_manager' => auth()->id(),
             'created_by' => auth()->id()    
         ]);
 
-        $project->members()->attach(auth()->id());
+        $project->members()->attach(auth()->id(), ['lead' => auth()->id()]);
 
         return redirect()->route('projects.show', ['project' => $project]);
     }
@@ -89,7 +89,9 @@ class ProjectController extends Controller
         $recentProjects = Cache::pull('recent-projects');
 
         if (!$recentProjects)
-            $recentProjects = Project::latest()->take(3)->get();
+            $recentProjects = Project::whereHas('members', function ($query) {
+                                    $query->where('user_id', auth()->id());
+                                })->get();
         else 
             $recentProjects = $recentProjects->prepend($project)->unique()->splice(0, 3);
         
@@ -120,13 +122,11 @@ class ProjectController extends Controller
     public function update(UpdateProjectRequest $request)
     {
         if ($request->ajax()) {
-            $updateArray = [];
-            foreach ($request->validated() as $key => $value) {
-                if ($key != 'id')
-                    $updateArray[$key] = $value;
-            }
+            $project = Project::whereId($request->id)->firstOrFail();
 
-            $affectedRow = Project::whereId($request->id)->update($updateArray);
+            $affectedRow = $project->members()->updateExistingPivot(auth()->id(), [
+                'is_starred' => $request->is_starred
+            ]);
 
             if ($affectedRow)
                 return response('Update success', 200);

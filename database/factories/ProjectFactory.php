@@ -28,7 +28,6 @@ class ProjectFactory extends Factory
             'code' => 'PRJ',
             'from' => Carbon::now(),
             'to' => Carbon::now()->addWeek(1),
-            'is_starred' => false,
             'created_by' => function () {
                 return User::first() ? User::first()->id : User::factory()->create()->id;
             }

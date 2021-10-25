@@ -8,9 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
+
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, EagerLoadPivotTrait;
 
     protected $fillable = [
         'name',
@@ -21,13 +23,18 @@ class User extends Authenticatable
 
     protected $hidden = [
         'password',
+        'created_at',
+        'updated_at',
     ];
 
-    public function managed () {
-        return $this->hasMany(Project::class, 'project_manager', 'id');
+    public function projects () {
+        return $this->belongsToMany(Project::class, 'project_members')
+                    ->withPivot('lead', 'is_starred')
+                    ->wherePivot('user_id', 2)
+                    ->using(ProjectMember::class);
     }
 
-    public function projects () {
-        return $this->belongsToMany(Project::class, 'project_members');
+    public function leader () {
+        return $this->hasMany(ProjectMember::class, 'lead', 'id');
     }
 }
