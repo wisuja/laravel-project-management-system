@@ -17,9 +17,12 @@ class CreateUserSkillsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('skill_id');
             $table->unsignedBigInteger('level');
+            $table->unsignedBigInteger('experience');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('skill_id')->references('id')->on('skills')->onDelete('cascade');
+
+            $table->primary(['user_id', 'skill_id']);
         });
     }
 

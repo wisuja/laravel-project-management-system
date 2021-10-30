@@ -39,7 +39,7 @@
         <div class="tab-pane fade" id="members" role="tabpanel">
           <div class="form-group">
             <label for='name'>Name</label>
-            <input type='search' name='name' id='name' class='form-control searchbox'>
+            <input type='search' name='name' id='name' class='form-control' placeholder="Search user..." list="users">
           </div>
           <table class="table table-hover table-sm w-100 text-center" id="datatable-members">
             <thead>
@@ -50,11 +50,16 @@
               </tr>
             </thead>
           </table>
+          <datalist id="users">
+            @foreach ($users as $user)
+              <option value="{{ $user->name }}">
+            @endforeach
+          </datalist>
         </div>
         <div class="tab-pane fade" id="status-groups" role="tabpanel">
           <div class="form-group">
             <label for='name'>Name</label>
-            <input type='text' name='name' id='name' class='form-control searchbox'>
+            <input type='text' name='name' id='name' class='form-control' placeholder="Create a new status group...">
           </div>
           <div>
             <ul class="list-unstyled" id="sortable">
@@ -67,7 +72,21 @@
             </ul>
           </div>
         </div>
-        <div class="tab-pane fade" id="labels" role="tabpanel">...</div>
+        <div class="tab-pane fade" id="labels" role="tabpanel">
+          <div class="form-group">
+            <label for='name'>Name</label>
+            <input type='search' name='name' id='name' class='form-control' placeholder="Add a new label...">
+          </div>
+          <table class="table table-hover table-sm w-100 text-center" id="datatable-labels">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+            </thead>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +101,20 @@
         processing: true,
         serverside: false,
         ajax: "{{ route('projects.members.index', ['project' => $project]) }}",
+        columns: [
+          {data: 'DT_RowIndex', orderable: true, searchable: true},
+          {data: 'name'},
+          {data: 'action', orderable: false, searchable: false}
+        ]
+      });
+    }
+
+    function refreshLabels () {
+      $('#datatable-labels').DataTable().clear().destroy();
+      $('#datatable-labels').DataTable({
+        processing: true,
+        serverside: false,
+        ajax: "{{ route('projects.labels.index', ['project' => $project]) }}",
         columns: [
           {data: 'DT_RowIndex', orderable: true, searchable: true},
           {data: 'name'},
@@ -141,6 +174,31 @@
       })
     }
 
+    function removeLabel (labelId) {
+      swal({
+        text: 'Are you sure to delete this label?',
+        showCancelButton: true,
+        icon: 'warning',
+        confirmButtonText: 'Confirm',
+      }, function () {
+        $.ajax({
+          url: "/projects/{{ $project->id }}/labels/" + labelId,
+          method: 'POST',
+          data: {
+            _token: '{{ csrf_token() }}',
+            _method: 'DELETE'
+          },
+          success: function (response) {
+            console.log(response);
+            refreshLabels();
+          },
+          error: function (error) {
+            console.log(error);
+          }
+        })
+      })
+    }
+
     $(function () {
       $('input[name=duration]').daterangepicker({
         startDate: '{{ $project->from }}',
@@ -150,7 +208,7 @@
         }
       });
 
-      $('#members .searchbox').on('keydown', function (e) {
+      $('#members input[name=name]').on('keydown', function (e) {
         if (e.which == 13) {
           let name = e.target.value;
 
@@ -162,7 +220,7 @@
               name
             },
             beforeSend: function () {
-              $('#members .searchbox').prop('disabled', true);
+              $('#members input[name=name]').prop('disabled', true);
             },
             success: function (user) {
               swal({
@@ -177,7 +235,7 @@
               console.error(error);
             },
             complete: function () {
-              $('#members .searchbox').prop('disabled', false);
+              $('#members input[name=name]').prop('disabled', false);
             },
             statusCode: {
               400: function () {
@@ -234,6 +292,50 @@
         }
       })
 
+      $('#labels input[name=name]').on('keydown', function (e) {
+        if (e.which == 13) {
+          let name = e.target.value;
+
+          $.ajax({
+            url: "{{ route('projects.labels.store', ['project' => $project]) }}",
+            method: 'POST',
+            data: {
+              _token: '{{ csrf_token() }}',
+              name
+            },
+            beforeSend: function () {
+              $('#labels input[name=name]').prop('disabled', true);
+            },
+            success: function (label) {
+              swal({
+                title: 'Success',
+                text: `Successfully add ${label.name} to the team`,
+                icon: 'success',
+                confirmButtonText: 'Ok'
+              });
+              refreshLabels();
+            },
+            error: function (error) {
+              console.error(error);
+            },
+            complete: function () {
+              $('#labels input[name=name]').val('');
+              $('#labels input[name=name]').prop('disabled', false);
+            },
+            statusCode: {
+              400: function () {
+                swal({
+                  title: 'Error',
+                  text: `Label already exists`,
+                  icon: 'error',
+                  confirmButtonText: 'Ok'
+                });
+              }
+            }
+          })
+        }
+      })
+
       $('#sortable').sortable({
         axis: 'y',
         update: function (event, ui) {
@@ -256,6 +358,7 @@
       });
 
       refreshMembers();
+      refreshLabels();
     })
   </script>
 @endsection

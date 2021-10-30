@@ -67,6 +67,10 @@ class Project extends Model
         return $this->hasMany(ProjectStatusGroup::class)->orderBy('order', 'ASC');
     }
 
+    public function labels () {
+        return $this->hasMany(ProjectLabel::class);
+    }
+
     public function tasks () {
         return $this->hasMany(Task::class);
     }

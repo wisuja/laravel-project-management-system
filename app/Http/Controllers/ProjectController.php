@@ -117,7 +117,8 @@ class ProjectController extends Controller
                 return view('pages.user.projects-show-boards', compact('project'));
                 break;
             case 'setting':
-                return view('pages.user.projects-show-setting', compact('project'));
+                $users = User::notInProject($project)->get();
+                return view('pages.user.projects-show-setting', compact('project', 'users'));
                 break;
             default:
                 abort(404);

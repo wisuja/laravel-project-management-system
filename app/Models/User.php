@@ -48,4 +48,12 @@ class User extends Authenticatable
     public function leader () {
         return $this->hasMany(ProjectMember::class, 'lead', 'id');
     }
+
+    public function scopeNotInProject($query, Project $project) {
+        $memberIds = $project->members->map(function ($member) {
+            return $member->id;
+        });
+
+        return $query->whereNotIn('id', $memberIds);
+    }
 }
