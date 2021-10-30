@@ -4,9 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use function PHPUnit\Framework\once;
-
-class CreateSprintsTable extends Migration
+class CreateProjectStatusGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,15 +13,13 @@ class CreateSprintsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sprints', function (Blueprint $table) {
+        Schema::create('project_status_groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('from');
-            $table->date('to');
-            $table->unsignedBigInteger('created_by');
-            $table->timestamps();
+            $table->smallInteger('order');
+            $table->unsignedBigInteger('project_id');
 
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
         });
     }
 
@@ -34,6 +30,6 @@ class CreateSprintsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sprints');
+        Schema::dropIfExists('project_status_groups');
     }
 }

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchUserRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\ProjectMember;
+use App\Models\ProjectStatusGroup;
+use App\Models\TaskType;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -83,8 +87,8 @@ class ProjectController extends Controller
         $project = Project::create([
             'name' => $request->name,
             'code' => $request->code,
-            'from' => Carbon::parse($from)->format('Y-m-d'),
-            'to' => Carbon::parse($to)->format('Y-m-d'),
+            'from' => $from,
+            'to' => $to,
             'created_by' => auth()->id()    
         ]);
 
@@ -99,22 +103,26 @@ class ProjectController extends Controller
      * @param \App\Models\Project $project
      * @return \Illuminate\Http\Response
      */
-    public function show(Project $project)
+    public function show(Project $project, $type = 'backlog')
     {
-        $recentProjects = Cache::pull('recent-projects');
+        $this->updateRecentProjects($project);
 
-        if (!$recentProjects)
-            $recentProjects = Project::whereHas('members', function ($query) {
-                                    $query->where('user_id', auth()->id());
-                                })->get();
-        else 
-            $recentProjects = $recentProjects->prepend($project)->unique()->splice(0, 3);
-        
-        Cache::rememberForever('recent-projects', function () use ($recentProjects) {
-            return $recentProjects;
-        });
-
-        return view('pages.user.projects-show', compact('project'));
+        switch ($type) {
+            case 'backlog':
+                $tasks = [];
+                $taskTypes = TaskType::all();
+                return view('pages.user.projects-show-backlog', compact('project', 'tasks', 'taskTypes'));
+                break;
+            case 'boards':
+                return view('pages.user.projects-show-boards', compact('project'));
+                break;
+            case 'setting':
+                return view('pages.user.projects-show-setting', compact('project'));
+                break;
+            default:
+                abort(404);
+                break;
+        }
     }
 
     /**
@@ -136,9 +144,9 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request)
     {
+        $project = Project::whereId($request->id)->firstOrFail();
+        
         if ($request->ajax()) {
-            $project = Project::whereId($request->id)->firstOrFail();
-
             $affectedRow = $project->members()->updateExistingPivot(auth()->id(), [
                 'is_starred' => $request->is_starred
             ]);
@@ -148,19 +156,60 @@ class ProjectController extends Controller
             else 
                 return response('Failed to update', 400);
         }
+
+        [$from, $to] = explode(' - ', $request->duration);
+
+        $project->update([
+            'name' => $request->name,
+            'code' => $request->code,
+            'from' => $from,
+            'to' => $to,
+        ]);
+
+        $this->updateRecentProjects($project);
+
+        return redirect()->route('projects.show', ['project' => $project, 'type' => 'setting']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param int $projectId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($projectId)
     {
-        Project::whereId($id)->delete();
+        $project = Project::whereId($projectId)->first();
+        $project->delete();
+
+        $this->updateRecentProjects($project, true);
 
         if (request()->ajax())
             return response('Delete success', 200);
+    }
+
+    /**
+     * Update recent projects in the cache
+     * @param \App\Models\Project $project;
+     */
+    private function updateRecentProjects (Project $project, $isRemoving = false) {
+        $recentProjects = Cache::pull('recent-projects');
+
+        if (!$recentProjects)
+            $recentProjects = Project::whereHas('members', function ($query) {
+                                    $query->where('user_id', auth()->id());
+                                })->get();
+        else {
+            if (!$isRemoving)
+                $recentProjects = $recentProjects->prepend($project)->unique('name')->splice(0, 3);        
+            else
+                $recentProjects = $recentProjects->filter(function ($item) use ($project) {
+                    return $item->name !== $project->name;
+                });
+        }
+        
+        Cache::rememberForever('recent-projects', function () use ($recentProjects) {
+            return $recentProjects;
+        });
     }
 }

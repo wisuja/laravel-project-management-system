@@ -14,3 +14,55 @@ body {
 #sidebar {
     min-height: calc(100vh - 3.5rem);
 }
+
+#sidebar-toggle {
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    &:hover {
+        background: rgba($color: #000000, $alpha: 0.5);
+
+        #sidebar-toggle-icon,
+        span {
+            color: white !important;
+        }
+    }
+}
+
+.backlog-container {
+    display: grid;
+    grid-auto-rows: max-content;
+    grid-gap: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.boards-container {
+    display: grid;
+    grid-auto-columns: 15rem;
+    grid-auto-flow: column;
+    grid-gap: 0.5rem;
+    height: 70vh;
+    overflow: auto;
+
+    .status-group-board {
+        background: #dedfe2;
+        border-radius: 0.25rem;
+        display: grid;
+        grid-auto-rows: max-content;
+        grid-gap: 0.5rem;
+        padding: 1rem;
+
+        .todo {
+            background: #fff;
+            box-shadow: 0 1px 0 rgba(9, 30, 66, 0.25);
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+        }
+    }
+}
+
+.btn-times:hover {
+    background: $danger;
+    color: white;
+}

@@ -21,6 +21,13 @@ class Project extends Model
         'created_by'
     ];
 
+    protected $dates = [
+        'from',
+        'to',
+        'created_at', 
+        'updated_at'
+    ];
+
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -32,6 +39,18 @@ class Project extends Model
         static::creating(function ($query) {
             $query->slug = Str::slug($query->name);
         });
+
+        static::created(function ($model) {
+            $model->statusGroups()->insert([
+                ['name' => 'Not Started', 'order' => 1, 'project_id' => $model->id],
+                ['name' => 'In Progress', 'order' => 2, 'project_id' => $model->id],
+                ['name' => 'Done', 'order' => 3, 'project_id' => $model->id],
+            ]);
+        });
+
+        static::updating(function ($query) {
+            $query->slug = Str::slug($query->name);
+        });
     }
 
     public function getRouteKeyName () {
@@ -41,11 +60,14 @@ class Project extends Model
     public function members () {
         return $this->belongsToMany(User::class, 'project_members')
                     ->withPivot('lead', 'is_starred')
-                    ->wherePivot('user_id', auth()->id())
                     ->using(ProjectMember::class);
     }
 
-    public function project () {
-        return $this->hasMany(ProjectMember::class);
+    public function statusGroups () {
+        return $this->hasMany(ProjectStatusGroup::class)->orderBy('order', 'ASC');
+    }
+
+    public function tasks () {
+        return $this->hasMany(Task::class);
     }
 }

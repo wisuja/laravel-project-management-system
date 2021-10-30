@@ -4,6 +4,10 @@
   {{ $project->name }}
 @endsection
 
+@section('_styles')
+  @yield('__styles')
+@endsection
+
 @section('_content')
   <div class="container-fluid">
     <div class="row">
@@ -13,31 +17,33 @@
             <span class="font-weight-bold text-capitalize">{{ $project->name }}</span>
           </li>
           <li class="py-2">
-            <button class="btn btn-light w-100 text-left">
-              <i class="fas fa-tasks mr-1"></i>
+            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'backlog']) }}" class="btn btn-light w-100 text-left">
+              <i class="fas fa-fw fa-tasks mr-1"></i>
               Backlog
-            </button>
+            </a>
           </li>
           <li class="py-2">
-            <button class="btn btn-light w-100 text-left">
-              <i class="fas fa-clipboard mr-1"></i>
+            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'boards']) }}" class="btn btn-light w-100 text-left">
+              <i class="fas fa-fw fa-clipboard mr-1"></i>
               Board
-            </button>
+            </a>
           </li>
           <li class="py-2">
-            <button class="btn btn-light w-100 text-left">
-              <i class="fas fa-cogs mr-1"></i>
+            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'setting']) }}" class="btn btn-light w-100 text-left">
+              <i class="fas fa-fw fa-cogs mr-1"></i>
               Project Setting
-            </button>
+            </a>
           </li>
         </ul>
       </div>
       <div class="col-9 p-3" id="content">
         <div>
           <span role="button" title="Click to toggle the sidebar" id="sidebar-toggle">
-            <i class="fas fa-chevron-left text-secondary py-3" id="sidebar-toggle-icon"></i>
+            <i class="fas fa-fw fa-chevron-left text-secondary py-3" id="sidebar-toggle-icon"></i>
+            <span class="ml-1">Hide</span>
           </span>
         </div>
+        {{ Breadcrumbs::render('project', $project) }}
         @yield('__content')
       </div>
     </div>
@@ -50,10 +56,14 @@
       $('#sidebar').toggleClass('d-none');
       $('#content').toggleClass('col-9 col-12');
       $('#sidebar-toggle-icon').toggleClass('fa-chevron-right');
+
+      let isSidebarOpen = !$('#sidebar').hasClass('d-none');
+      $('#sidebar-toggle span').text(isSidebarOpen ? 'Hide' : 'Expand');
     }
 
     $(function () {
       $('#sidebar-toggle').on('click', toggleSidebar);
     })
   </script>
+  @yield('__scripts')
 @endsection

@@ -4,6 +4,10 @@
   @yield('title')
 @endsection
 
+@section('_styles')
+  @yield('styles')
+@endsection
+
 @section('nav')
   @include('partials.user.nav')
 @endsection
@@ -19,7 +23,11 @@
   @yield('_scripts')
 
   <script>
-    $('#createProjectModal input[name=duration]').daterangepicker();
+    $('#createProjectModal input[name=duration]').daterangepicker({
+      locale: {
+        format: 'YYYY-MM-DD',
+      }
+    });
     $('#createProjectModal input[name=name]').on('input', function() {
       let name = $(this).val().split(' ').filter((word) => word !== '' && word.length >= 3);
       let code = '';

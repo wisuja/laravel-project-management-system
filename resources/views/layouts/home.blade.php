@@ -4,6 +4,10 @@
   @yield('title')
 @endsection
 
+@section('_styles')
+  @yield('styles')
+@endsection
+
 @section('nav')
   @include('partials.home.nav')
 @endsection

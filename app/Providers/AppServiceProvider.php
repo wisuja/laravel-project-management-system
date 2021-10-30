@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         view()->composer('pages.user.*', function ($view) {
-            $mostRecentProject = Cache::get('recent-projects')->first();
+            $mostRecentProject = Cache::get('recent-projects') ? Cache::get('recent-projects')->first() : null;
 
             $view->with('mostRecentProject', $mostRecentProject);
         });

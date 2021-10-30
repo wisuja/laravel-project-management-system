@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectMemberController;
+use App\Http\Controllers\ProjectStatusGroupController;
+use App\Http\Controllers\TaskController;
+use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,9 +34,19 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('projects')->name('projects.')->group(function () {
         Route::get('/', [ProjectController::class, 'index'])->name('index');
-        Route::get('/{project}', [ProjectController::class, 'show'])->name('show');
+        Route::get('/{project}/members', [ProjectMemberController::class, 'index'])->name('members.index');
+        Route::get('/{project}/{type?}', [ProjectController::class, 'show'])->name('show');
         Route::post('/', [ProjectController::class, 'store'])->name('store');
+        Route::post('/{project}/members/search', [ProjectMemberController::class, 'store'])->name('members.store');
+        Route::post('/{project}/status-groups', [ProjectStatusGroupController::class, 'store'])->name('status-groups.store');
         Route::put('/', [ProjectController::class, 'update'])->name('update');
-        Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('destroy');
+        Route::put('/{projectId}/status-groups', [ProjectStatusGroupController::class, 'update'])->name('status-groups.update');
+        Route::delete('/{projectId}', [ProjectController::class, 'destroy'])->name('destroy');
+        Route::delete('/{projectId}/members/{userId}', [ProjectMemberController::class, 'destroy'])->name('members.destroy');
+        Route::delete('/{projectId}/status-groups/{groupId}', [ProjectStatusGroupController::class, 'destroy'])->name('status-groups.destroy');
+    });
+
+    Route::prefix('tasks')->name('tasks.')->group(function () {
+        Route::post('/', [TaskController::class, 'store'])->name('store');
     });
 });
