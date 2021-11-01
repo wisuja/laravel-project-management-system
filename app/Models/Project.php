@@ -37,7 +37,9 @@ class Project extends Model
         parent::boot();
 
         static::creating(function ($query) {
+            $query->name = ucwords(strtolower($query->name));
             $query->slug = Str::slug($query->name);
+            $query->code = strtoupper(substr($query->name, 0, 3));
         });
 
         static::created(function ($model) {
@@ -46,10 +48,18 @@ class Project extends Model
                 ['name' => 'In Progress', 'order' => 2, 'project_id' => $model->id],
                 ['name' => 'Done', 'order' => 3, 'project_id' => $model->id],
             ]);
+            $model->labels()->insert([
+                ['name' => 'Dev', 'project_id' => $model->id],
+                ['name' => 'Design', 'project_id' => $model->id],
+                ['name' => 'Testing', 'project_id' => $model->id],
+                ['name' => 'Bugfixing', 'project_id' => $model->id],
+            ]);
         });
 
         static::updating(function ($query) {
+            $query->name = ucwords(strtolower($query->name));
             $query->slug = Str::slug($query->name);
+            $query->code = strtoupper(substr($query->name, 0, 3));
         });
     }
 

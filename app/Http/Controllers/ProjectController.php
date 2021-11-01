@@ -86,7 +86,6 @@ class ProjectController extends Controller
         
         $project = Project::create([
             'name' => $request->name,
-            'code' => $request->code,
             'from' => $from,
             'to' => $to,
             'created_by' => auth()->id()    
@@ -109,9 +108,8 @@ class ProjectController extends Controller
 
         switch ($type) {
             case 'backlog':
-                $tasks = [];
                 $taskTypes = TaskType::all();
-                return view('pages.user.projects-show-backlog', compact('project', 'tasks', 'taskTypes'));
+                return view('pages.user.projects-show-backlog', compact('project', 'taskTypes'));
                 break;
             case 'boards':
                 return view('pages.user.projects-show-boards', compact('project'));
@@ -162,7 +160,6 @@ class ProjectController extends Controller
 
         $project->update([
             'name' => $request->name,
-            'code' => $request->code,
             'from' => $from,
             'to' => $to,
         ]);

@@ -15,16 +15,16 @@ class CreateTasksTable extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('code');
+            $table->string('code')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->date('deadline');
+            $table->dateTime('deadline');
             $table->boolean('is_done')->default(false);
             $table->unsignedBigInteger('task_type_id');
             $table->unsignedBigInteger('project_id');
-            $table->unsignedBigInteger('sprint_id');
+            $table->unsignedBigInteger('sprint_id')->nullable();
             $table->unsignedBigInteger('status_group_id')->nullable();
-            $table->unsignedBigInteger('label')->nullable();
+            $table->unsignedBigInteger('label_id')->nullable();
             $table->unsignedBigInteger('linked_task')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('created_by');

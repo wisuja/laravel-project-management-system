@@ -43,7 +43,6 @@
             <span class="ml-1">Hide</span>
           </span>
         </div>
-        {{ Breadcrumbs::render('project', $project) }}
         @yield('__content')
       </div>
     </div>

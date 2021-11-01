@@ -1,6 +1,7 @@
 @extends('layouts.project')
 
 @section('__content')
+  {{ Breadcrumbs::render('project', $project) }}
   <h5 class="my-3">Setting</h5>
   <div class="row">
     <div class="col-3">
@@ -20,11 +21,7 @@
             <input type="hidden" name="id" value="{{ $project->id }}">
             <div class="form-group">
               <label for='name'>Name</label>
-              <input type='text' name='name' id='name' class='form-control' value="{{ $project->name }}" required>
-            </div>
-            <div class="form-group">
-              <label for='code'>Code</label>
-              <input type='text' name='code' id='code' class='form-control' value="{{ $project->code }}" minlength="3" maxlength="3" required>
+              <input type='text' name='name' id='name' class='form-control text-capitalize' value="{{ $project->name }}" required>
             </div>
             <div class="form-group">
               <label for='duration'>Duration</label>

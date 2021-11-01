@@ -1,6 +1,7 @@
 @extends('layouts.project')
 
 @section('__content')
+  {{ Breadcrumbs::render('project', $project) }}
   <div class="boards-container">
     <div class="status-group-board">
       <h5>No Status</h5>

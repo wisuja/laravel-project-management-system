@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ValidDuration;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProjectRequest extends FormRequest
+class StoreProjectTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +24,13 @@ class StoreProjectRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|min:3',
-            'duration' => ['required', new ValidDuration]
+            'task_type_id' => 'required|exists:task_types,id',
+            'title' => 'required',
+            'description' => 'nullable',
+            'assigned_to' => 'required|array',
+            'assigned_to.*' => 'required|exists:project_members,user_id',
+            'label' => 'required',
+            'deadline' => 'required|date'
         ];
     }
 }

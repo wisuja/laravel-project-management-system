@@ -30,7 +30,6 @@ class UpdateProjectRequest extends FormRequest
             'id' => 'required',
             'is_starred' => 'nullable|boolean',
             'name' => 'nullable|string',
-            'code' => 'nullable|string|size:3',
             'duration' => ['nullable', new ValidDuration]
         ];
     }

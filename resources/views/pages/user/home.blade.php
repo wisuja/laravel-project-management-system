@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="row">
-            @foreach ($recentProjects as $project)
+            @forelse ($recentProjects as $project)
                 <div class="col-4">
                     <a href="{{ route('projects.show', ['project' => $project]) }}">
                         <div class="card">
@@ -30,7 +30,11 @@
                         </div>
                     </a>
                 </div>
-            @endforeach
+            @empty
+                <div class="col-12">
+                    <p class="mb-0">No Recent Project</p>
+                </div>
+            @endforelse
         </div>
         <div class="row mt-1">
             <div class="col-12">

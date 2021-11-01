@@ -18406,6 +18406,10 @@ body {
   height: 100%;
 }
 
+label {
+  font-weight: bold;
+}
+
 #sidebar {
   min-height: calc(100vh - 3.5rem);
 }
@@ -18430,6 +18434,14 @@ body {
   grid-gap: 0.5rem;
   padding: 1rem;
   margin: 1rem 0;
+  border-radius: 0.25rem;
+  background: rgba(0, 0, 0, 0.1);
+}
+.backlog-container .todo {
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(9, 30, 66, 0.25);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
 }
 
 .boards-container {
@@ -18459,4 +18471,9 @@ body {
 .btn-times:hover {
   background: #dc3545;
   color: white;
+}
+
+.description-box {
+  height: 15rem;
+  overflow: auto;
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 
 class Task extends Model
 {
@@ -19,14 +20,29 @@ class Task extends Model
         'project_id',
         'sprint_id',
         'status_group_id',
-        'label',
+        'label_id',
         'linked_task',
-        'parent_id'
+        'parent_id',
+        'created_by',
     ];
 
     protected $casts = [
         'is_done' => 'boolean'
     ];
+
+    protected static function boot () {
+        parent::boot();
+
+        static::created(function ($model) {
+            $model->code = strtolower($model->project->code . '-' . $model->id);
+            $model->save();
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'code';
+    }
 
     public function project () {
         return $this->belongsTo(Project::class);
@@ -38,6 +54,14 @@ class Task extends Model
 
     public function sprint () {
         return $this->belongsTo(Sprint::class);
+    }
+
+    public function type () {
+        return $this->belongsTo(TaskType::class, 'task_type_id', 'id');
+    }
+
+    public function label () {
+        return $this->belongsTo(ProjectLabel::class, 'label_id');
     }
 
     public function assignments () {

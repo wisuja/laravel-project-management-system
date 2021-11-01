@@ -12,11 +12,7 @@
           @csrf
           <div class="form-group">
             <label for='name'>Name</label>
-            <input type='text' name='name' id='name' class='form-control' required minlength="3">
-          </div>
-          <div class="form-group">
-            <label for='code'>Code</label>
-            <input type='text' name='code' id='code' class='form-control-plaintext' readonly required>
+            <input type='text' name='name' id='name' class='form-control text-capitalize' required minlength="3">
           </div>
           <div class="form-group">
             <label for='duration'>Duration</label>

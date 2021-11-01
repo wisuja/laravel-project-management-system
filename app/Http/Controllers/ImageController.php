@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreImageRequest;
 use Illuminate\Http\Request;
 
-class TaskController extends Controller
+class ImageController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -32,9 +33,11 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreImageRequest $request)
     {
-        dd($request->all());
+        $path = $request->file('image')->store('uploads', 'public');
+
+        return asset('/storage/' . $path);
     }
 
     /**

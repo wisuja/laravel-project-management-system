@@ -16,9 +16,9 @@ class TaskTypeSeeder extends Seeder
     {
         TaskType::insert([
             ['name' => 'Task'],
+            ['name' => 'Bug'],
             ['name' => 'Story'],
             ['name' => 'Epic'],
-            ['name' => 'Bug'],
         ]);
     }
 }
