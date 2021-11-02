@@ -14,7 +14,7 @@ class CreateTaskAttachmentsTable extends Migration
     public function up()
     {
         Schema::create('task_attachments', function (Blueprint $table) {
-            $table->unsignedBigInteger('task_id');
+            $table->unsignedBigInteger('task_id')->primary();
             $table->string('attachment');
             
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');

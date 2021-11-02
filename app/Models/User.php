@@ -45,6 +45,10 @@ class User extends Authenticatable
                     ->using(TaskAssignment::class);
     }
 
+    public function taskCreated () {
+        return $this->hasMany(Task::class, 'created_by');
+    }
+
     public function leader () {
         return $this->hasMany(ProjectMember::class, 'lead', 'id');
     }

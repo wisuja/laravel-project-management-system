@@ -19,6 +19,8 @@ class CreateTaskCommentsTable extends Migration
 
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
+            
+            $table->primary(['task_id', 'comment_id']);
         });
     }
 

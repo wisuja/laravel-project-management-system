@@ -19,7 +19,7 @@ class CreateTasksTable extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('deadline');
-            $table->boolean('is_done')->default(false);
+            $table->boolean('is_archived')->default(false);
             $table->unsignedBigInteger('task_type_id');
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('sprint_id')->nullable();

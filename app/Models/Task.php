@@ -44,6 +44,10 @@ class Task extends Model
         return 'code';
     }
 
+    public function creator () {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public function project () {
         return $this->belongsTo(Project::class);
     }
@@ -64,7 +68,15 @@ class Task extends Model
         return $this->belongsTo(ProjectLabel::class, 'label_id');
     }
 
+    public function attachments () {
+        return $this->hasMany(TaskAttachment::class);
+    }
+
     public function assignments () {
         return $this->belongsToMany(User::class, 'task_assignments')->using(TaskAssignment::class);
+    }
+
+    public function scopeArchived ($query) {
+        return $query->where('is_archived', true);
     }
 }

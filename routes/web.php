@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{project}/members', [ProjectMemberController::class, 'index'])->name('members.index');
         Route::get('/{project}/labels', [ProjectLabelController::class, 'index'])->name('labels.index');
         Route::get('/{project}/tasks/{task}', [ProjectTaskController::class, 'show'])->name('tasks.show');
+        Route::get('/{project}/tasks/{task}/edit', [ProjectTaskController::class, 'edit'])->name('tasks.edit');
         Route::get('/{project}/{type?}', [ProjectController::class, 'show'])->name('show');
         Route::post('/', [ProjectController::class, 'store'])->name('store');
         Route::post('/{project}/members/search', [ProjectMemberController::class, 'store'])->name('members.store');
@@ -46,10 +47,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{project}/tasks', [ProjectTaskController::class, 'store'])->name('tasks.store');
         Route::put('/', [ProjectController::class, 'update'])->name('update');
         Route::put('/{projectId}/status-groups', [ProjectStatusGroupController::class, 'update'])->name('status-groups.update');
+        Route::put('/{project}/tasks/{task}', [ProjectTaskController::class, 'update'])->name('tasks.update');
         Route::delete('/{projectId}', [ProjectController::class, 'destroy'])->name('destroy');
         Route::delete('/{projectId}/members/{userId}', [ProjectMemberController::class, 'destroy'])->name('members.destroy');
         Route::delete('/{projectId}/status-groups/{groupId}', [ProjectStatusGroupController::class, 'destroy'])->name('status-groups.destroy');
         Route::delete('/{projectId}/labels/{groupId}', [ProjectLabelController::class, 'destroy'])->name('labels.destroy');
+        Route::delete('/{projectId}/tasks/{taskId}', [ProjectTaskController::class, 'destroy'])->name('tasks.destroy');
     });
     Route::post('/save-image', [ImageController::class, 'store'])->name('save-image');
 });

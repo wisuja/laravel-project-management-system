@@ -12,8 +12,16 @@
   <h5>Backlog</h5>
   <div class="backlog-container">
     @foreach ($project->tasks as $task)
-      <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="todo text-decoration-none text-dark">
-        {{ $task->title }}
+      <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="todo text-decoration-none text-dark d-flex justify-content-between align-items-center">
+        <span>{{ $task->title }}</span>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-light" type="button" data-toggle="dropdown">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right">
+            <span role="button" class="dropdown-item" onclick="deleteTask({{ $task->id }})">Delete</span>
+          </div>
+        </div>
       </a>
     @endforeach
     <button class="btn btn-light" type="button" data-toggle='modal' data-target='#createTaskModal'>
@@ -92,6 +100,31 @@
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
   <script>
+    function deleteTask (taskId) {
+      swal({
+        text: 'Are you sure to delete this task?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+      }, function () {
+        $.ajax({
+          url: '/projects/{{ $project->id }}/tasks/' + taskId,
+          method: 'POST',
+          data: {
+            _token: '{{ csrf_token() }}',
+            _method: 'DELETE',
+          },
+          success: function (response) {
+            console.log(response);
+            window.location.reload();
+          },
+          error: function (error) {
+            console.error(error);
+          }
+        })
+      });
+    }
+
     function sendFile(file) {
       let data = new FormData();
       data.append("_token", '{{ csrf_token() }}');
