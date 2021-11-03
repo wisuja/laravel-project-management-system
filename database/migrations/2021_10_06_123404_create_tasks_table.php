@@ -19,6 +19,7 @@ class CreateTasksTable extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('deadline');
+            $table->unsignedInteger('order');
             $table->boolean('is_archived')->default(false);
             $table->unsignedBigInteger('task_type_id');
             $table->unsignedBigInteger('project_id');

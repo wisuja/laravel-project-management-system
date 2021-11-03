@@ -5,10 +5,20 @@
   <div class="boards-container">
     <div class="status-group-board">
       <h5>No Status</h5>
+      @foreach ($project->sprint->tasks as $task)
+        <div class="todo" draggable="true">
+          {{ $task->title }}
+        </div>
+      @endforeach
     </div>
     @foreach ($project->statusGroups as $group)
       <div class="status-group-board">
         <h5>{{ $group->name }}</h5>
+        @foreach ($group->tasks as $task)
+          <div class="todo" draggable="true">
+            {{ $task->title }}
+          </div>
+        @endforeach
       </div>
     @endforeach
   </div>

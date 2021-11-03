@@ -21,6 +21,7 @@ class CreateProjectsTable extends Migration
             $table->date('from');
             $table->date('to');
             $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('sprint_id')->nullable();
             $table->timestamps();
 
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');

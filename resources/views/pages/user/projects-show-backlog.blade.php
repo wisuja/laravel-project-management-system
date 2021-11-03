@@ -4,15 +4,40 @@
   {{ Breadcrumbs::render('project', $project) }}
   <div class="d-flex justify-content-between align-items-center">
     <h5>Sprint</h5>
-    <button class="btn btn-primary">Start Sprint</button>
+    @if (is_null($project->sprint))
+      <button type="button" class="btn btn-primary" data-toggle='modal' data-target='#createSprintModal'>Start Sprint</button>
+    @else
+      <button type="button" class="btn btn-primary">Complete Sprint</button>
+    @endif
   </div>
-  <div class="backlog-container">
-    
+  @if (is_null($project->sprint))
+    <p>Please start the sprint first.</p>
+  @else
+    <div class="tasks-container" id="sprint">
+      @foreach ($project->sprint->tasks as $task)
+        <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="todo text-decoration-none text-dark d-flex justify-content-between align-items-center" id="{{ $task->id }}">
+          <span>{{ $task->title }}</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-light" type="button" data-toggle="dropdown">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <span role="button" class="dropdown-item" onclick="deleteTask({{ $task->id }})">Delete</span>
+            </div>
+          </div>
+        </a>
+      @endforeach
+    </div>
+  @endif
+  <div class="d-flex justify-content-between align-items-center">
+    <h5>Backlog</h5>
+    <button class="btn btn-primary" type="button" data-toggle='modal' data-target='#createTaskModal'>
+      Add Task
+    </button>
   </div>
-  <h5>Backlog</h5>
-  <div class="backlog-container">
-    @foreach ($project->tasks as $task)
-      <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="todo text-decoration-none text-dark d-flex justify-content-between align-items-center">
+  <div class="tasks-container" id="backlog">
+    @foreach ($project->backlog as $task)
+      <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="todo text-decoration-none text-dark d-flex justify-content-between align-items-center" id="{{ $task->id }}">
         <span>{{ $task->title }}</span>
         <div class="dropdown">
           <button class="btn btn-sm btn-light" type="button" data-toggle="dropdown">
@@ -24,10 +49,6 @@
         </div>
       </a>
     @endforeach
-    <button class="btn btn-light" type="button" data-toggle='modal' data-target='#createTaskModal'>
-      <i class="fas fa-plus mr-1"></i>
-      Add Task
-    </button>
   </div>
 
   <div id="createTaskModal" class="modal fade" tabindex="-1" role="dialog">
@@ -89,6 +110,36 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-primary" form="form-create-task">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="createSprintModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createSprintModalLabel">Create a new sprint</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{{ route('projects.sprints.store', ['project' => $project]) }}" method="POST" id="form-create-sprint">
+            @csrf
+            <div class="form-group">
+              <label for='name'>Name</label>
+              <input type='text' name='name' id='name' class='form-control' required>
+            </div>
+            <div class="form-group">
+              <label for='dates'>Date</label>
+              <input type='text' name='dates' id='dates' class='form-control' required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" form="form-create-sprint">Create</button>
         </div>
       </div>
     </div>
@@ -180,8 +231,29 @@
         }
       });
 
-      $('.backlog-container').sortable({
-        connectWith: '.backlog-container'
+      $('.tasks-container').sortable({
+        connectWith: '.tasks-container',
+        update: function(e,ui) {
+          let parent = ui.item.parent().get(0).id;
+          let data = $(`#${parent}`).sortable('toArray');
+
+          $.ajax({
+            url: "{{ route('projects.tasks.update', ['project' => $project]) }}",
+            method: 'POST',
+            data: {
+              _token: '{{ csrf_token() }}',
+              _method: 'PUT',
+              type: parent,
+              order: data
+            }
+          })
+        }
+      });
+
+      $('#createSprintModal input[name=dates]').daterangepicker({
+        locale: {
+          format: 'YYYY-MM-DD',
+        }
       });
     })
   </script>

@@ -21,6 +21,10 @@ class Sprint extends Model
     }
 
     public function tasks () {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class)->orderBy('order', 'ASC');
+    }
+
+    public function projects () {
+        return $this->hasMany(Project::class);
     }
 }

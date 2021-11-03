@@ -20,6 +20,7 @@ class CreateSprintsTable extends Migration
             $table->string('name');
             $table->date('from');
             $table->date('to');
+            $table->boolean('is_completed')->default(false);
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
 

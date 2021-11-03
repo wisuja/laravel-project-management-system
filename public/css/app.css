@@ -18427,7 +18427,7 @@ label {
   color: white !important;
 }
 
-.backlog-container {
+.tasks-container {
   display: grid;
   grid-auto-rows: -webkit-max-content;
   grid-auto-rows: max-content;
@@ -18437,7 +18437,7 @@ label {
   border-radius: 0.25rem;
   background: rgba(0, 0, 0, 0.1);
 }
-.backlog-container .todo {
+.tasks-container .todo {
   background: #fff;
   box-shadow: 0 1px 0 rgba(9, 30, 66, 0.25);
   border-radius: 0.25rem;

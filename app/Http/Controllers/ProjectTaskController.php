@@ -116,50 +116,74 @@ class ProjectTaskController extends Controller
      * @param \App\Models\Task $task
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProjectTaskRequest $request, Project $project, Task $task)
+    public function update(UpdateProjectTaskRequest $request, Project $project, Task $task = null)
     {
-        preg_match_all('/<img[^>]+src="([^">]+)"/', $request->description, $matches);
-        $attachments = [];
+        if ($request->ajax()) {
+            if ($request->type == 'sprint') {
+                foreach ($request->order as $index => $taskId) {
+                    Task::where('project_id', $project->id)
+                        ->where('id', $taskId)
+                        ->update([
+                            'order' => $index + 1,
+                            'sprint_id' => $project->sprint->id,
+                        ]);
+                };
+            } else {
+                foreach ($request->order as $index => $taskId) {
+                    Task::where('project_id', $project->id)
+                        ->where('id', $taskId)
+                        ->update([
+                            'order' => $index + 1,
+                            'sprint_id' => NULL,
+                        ]);
+                };
+            }
 
-        foreach ($matches[1] as $imageUrl) {
-            [, $image] = explode('/storage/', $imageUrl);
-            $attachments[] = $image;
-        }
-
-        $labelId = ProjectLabel::where('name', $request->label)
-                                ->where('project_id', $project->id)
-                                ->value('id');
-
-        if (!$labelId) {
-            $labelId = ProjectLabel::create([
-                'name' => $request->label,
-                'project_id' => $project->id
-            ])->id;
-        }
-
-        $task->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'deadline' => $request->deadline,
-            'task_type_id' => $request->task_type_id,
-            'label_id' => $labelId,
-        ]);
-
-        foreach ($request->assigned_to as $userId) {
-            $task->assignments()->updateExistingPivot($task->id, [
-                'user_id' => $userId
+            return response('Order success');
+        } else {
+            preg_match_all('/<img[^>]+src="([^">]+)"/', $request->description, $matches);
+            $attachments = [];
+    
+            foreach ($matches[1] as $imageUrl) {
+                [, $image] = explode('/storage/', $imageUrl);
+                $attachments[] = $image;
+            }
+    
+            $labelId = ProjectLabel::where('name', $request->label)
+                                    ->where('project_id', $project->id)
+                                    ->value('id');
+    
+            if (!$labelId) {
+                $labelId = ProjectLabel::create([
+                    'name' => $request->label,
+                    'project_id' => $project->id
+                ])->id;
+            }
+    
+            $task->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'deadline' => $request->deadline,
+                'task_type_id' => $request->task_type_id,
+                'label_id' => $labelId,
             ]);
+    
+            foreach ($request->assigned_to as $userId) {
+                $task->assignments()->updateExistingPivot($task->id, [
+                    'user_id' => $userId
+                ]);
+            }
+    
+            $task->attachments()->delete();
+            foreach ($attachments as $attachment) {
+                $task->attachments()->insert([
+                    'task_id' => $task->id,
+                    'attachment' => $attachment
+                ]);
+            }
+    
+            return redirect()->route('projects.tasks.show', ['project' => $project, 'task' => $task]);
         }
-
-        $task->attachments()->delete();
-        foreach ($attachments as $attachment) {
-            $task->attachments()->insert([
-                'task_id' => $task->id,
-                'attachment' => $attachment
-            ]);
-        }
-
-        return redirect()->route('projects.tasks.show', ['project' => $project, 'task' => $task]);
     }
 
     /**

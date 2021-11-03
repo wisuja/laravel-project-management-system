@@ -33,6 +33,14 @@ class Task extends Model
     protected static function boot () {
         parent::boot();
 
+        static::creating(function ($query) {
+            $latestOrder = Task::where('project_id', $query->project_id)
+                                ->whereNull('sprint_id')
+                                ->orderBy('order', 'DESC')
+                                ->value('order');
+            $query->order = $latestOrder + 1;
+        });
+
         static::created(function ($model) {
             $model->code = strtolower($model->project->code . '-' . $model->id);
             $model->save();
@@ -53,7 +61,7 @@ class Task extends Model
     }
 
     public function statusGroup () {
-        return $this->belongsTo(ProjectStatusGroup::class);
+        return $this->belongsTo(ProjectStatusGroup::class, 'status_group_id');
     }
 
     public function sprint () {

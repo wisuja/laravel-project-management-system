@@ -18,7 +18,8 @@ class Project extends Model
         'code', 
         'from', 
         'to', 
-        'created_by'
+        'created_by',
+        'sprint_id',
     ];
 
     protected $dates = [
@@ -83,5 +84,13 @@ class Project extends Model
 
     public function tasks () {
         return $this->hasMany(Task::class);
+    }
+
+    public function backlog () {
+        return $this->hasMany(Task::class)->whereNull('sprint_id')->orderBy('order', 'ASC');
+    }
+
+    public function sprint () {
+        return $this->belongsTo(Sprint::class);
     }
 }

@@ -22,6 +22,6 @@ class ProjectStatusGroup extends Model
     }
 
     public function tasks () {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class, 'status_group_id')->whereNotNull('sprint_id')->orderBy('order', 'ASC');
     }
 }

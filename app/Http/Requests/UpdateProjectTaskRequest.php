@@ -24,13 +24,19 @@ class UpdateProjectTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'task_type_id' => 'required|exists:task_types,id',
-            'title' => 'required',
+            'type' => ['nullable',
+                        function ($attribute, $value, $fail) {
+                            if (!in_array($value, ['sprint', 'backlog']))
+                                $fail('This ' . $attribute . ' is not valid');
+                        }],
+            'order' => 'nullable|array',
+            'task_type_id' => 'nullable|exists:task_types,id',
+            'title' => 'nullable',
             'description' => 'nullable',
-            'assigned_to' => 'required|array',
-            'assigned_to.*' => 'required|exists:project_members,user_id',
-            'label' => 'required',
-            'deadline' => 'required|date'
+            'assigned_to' => 'nullable|array',
+            'assigned_to.*' => 'nullable|exists:project_members,user_id',
+            'label' => 'nullable',
+            'deadline' => 'nullable|date'
         ];
     }
 }
