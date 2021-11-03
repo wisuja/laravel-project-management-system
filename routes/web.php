@@ -50,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/', [ProjectController::class, 'update'])->name('update');
         Route::put('/{projectId}/status-groups', [ProjectStatusGroupController::class, 'update'])->name('status-groups.update');
         Route::put('/{project}/tasks/{task?}', [ProjectTaskController::class, 'update'])->name('tasks.update');
-        Route::put('/{project}/sprints/{sprint}/complete', [ProjectSprintController::class, 'update'])->name('sprints.complete');
+        Route::put('/{project}/sprints', [ProjectSprintController::class, 'update'])->name('sprints.update');
         Route::delete('/{projectId}', [ProjectController::class, 'destroy'])->name('destroy');
         Route::delete('/{projectId}/members/{userId}', [ProjectMemberController::class, 'destroy'])->name('members.destroy');
         Route::delete('/{projectId}/status-groups/{groupId}', [ProjectStatusGroupController::class, 'destroy'])->name('status-groups.destroy');

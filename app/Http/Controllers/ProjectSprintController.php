@@ -85,19 +85,23 @@ class ProjectSprintController extends Controller
      * @param \App\Models\Sprint $sprint
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project, Sprint $sprint)
+    public function update(Request $request, Project $project)
     {
-        $sprint->tasks->update([
-            'sprint_id' => NULL
-        ]);
-
         $isDoneId = $project->statusGroups()->where('name', 'Done')->value('id');
-        $sprint->tasks->where('status_group_id', $isDoneId)->update([
+        $project->sprint->tasks()->where('status_group_id', $isDoneId)->update([
             'is_archived' => true,
         ]);
 
-        $sprint->update([
+        $project->sprint->tasks()->update([
+            'sprint_id' => NULL
+        ]);
+
+        $project->sprint()->update([
             'is_completed' => true,
+        ]);
+
+        $project->update([
+            'sprint_id' => NULL
         ]);
 
         return response('Sprint completed');

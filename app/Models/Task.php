@@ -15,7 +15,7 @@ class Task extends Model
         'title',
         'description',
         'deadline',
-        'is_done',
+        'is_archived',
         'task_type_id',
         'project_id',
         'sprint_id',

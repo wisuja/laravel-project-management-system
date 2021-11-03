@@ -6,7 +6,7 @@
     <div class="status-group-board" id="no-status">
       <h5>No Status</h5>
       @foreach ($project->sprint->noStatusTasks as $task)
-        <div class="todo">
+        <div class="todo" id="{{ $task->id }}">
           {{ $task->title }}
         </div>
       @endforeach
@@ -15,7 +15,7 @@
       <div class="status-group-board" id="{{ $group->id }}">
         <h5>{{ $group->name }}</h5>
         @foreach ($group->tasks as $task)
-          <div class="todo">
+          <div class="todo" id="{{ $task->id }}">
             {{ $task->title }}
           </div>
         @endforeach
@@ -28,6 +28,7 @@
   <script>
     $('.status-group-board').sortable({
       connectWith: '.status-group-board',
+      items: '.todo',
       update: function (event, ui) {
         let parent = ui.item.parent().get(0).id;
         let data = $(`#${parent}`).sortable('toArray');

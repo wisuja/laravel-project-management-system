@@ -156,7 +156,7 @@
         confirmButtonText: 'Confirm',
       }, function () {
         $.ajax({
-          url: "{{ route('projects.sprints.complete', ['project' => $project, 'sprint' => $project->sprint]) }}",
+          url: "{{ route('projects.sprints.update', ['project' => $project]) }}",
           method: 'POST',
           data: {
             _token: '{{ csrf_token() }}',
