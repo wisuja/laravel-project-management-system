@@ -119,25 +119,23 @@ class ProjectTaskController extends Controller
     public function update(UpdateProjectTaskRequest $request, Project $project, Task $task = null)
     {
         if ($request->ajax()) {
-            if ($request->type == 'sprint') {
-                foreach ($request->order as $index => $taskId) {
-                    Task::where('project_id', $project->id)
-                        ->where('id', $taskId)
-                        ->update([
-                            'order' => $index + 1,
-                            'sprint_id' => $project->sprint->id,
-                        ]);
-                };
-            } else {
-                foreach ($request->order as $index => $taskId) {
-                    Task::where('project_id', $project->id)
-                        ->where('id', $taskId)
-                        ->update([
-                            'order' => $index + 1,
-                            'sprint_id' => NULL,
-                        ]);
-                };
-            }
+            $updateParameters = [];
+            if ($request->page == 'backlog')
+                $updateParameters['sprint_id'] = $request->type == 'sprint' ? $project->sprint->id : NULL;
+            else
+                $updateParameters['status_group_id'] = $request->status_group == 'no_status' ? 
+                                                        NULL : 
+                                                        $project->statusGroups()
+                                                                ->where('id', $request->status_group)
+                                                                ->value('id');
+
+            foreach ($request->order as $index => $taskId) {
+                Task::where('project_id', $project->id)
+                    ->where('id', $taskId)
+                    ->update(array_merge([
+                        'order' => $index + 1
+                    ], $updateParameters));
+            };
 
             return response('Order success');
         } else {

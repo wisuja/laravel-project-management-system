@@ -7,7 +7,7 @@
     @if (is_null($project->sprint))
       <button type="button" class="btn btn-primary" data-toggle='modal' data-target='#createSprintModal'>Start Sprint</button>
     @else
-      <button type="button" class="btn btn-primary">Complete Sprint</button>
+      <button type="button" class="btn btn-primary" onclick="completeSprint()">Complete Sprint</button>
     @endif
   </div>
   @if (is_null($project->sprint))
@@ -147,10 +147,32 @@
 @endsection
 
 @section('__scripts')
-  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
   <script>
+    function completeSprint () {
+      swal({
+        text: 'Are you sure to complete this sprint?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+      }, function () {
+        $.ajax({
+          url: "{{ route('projects.sprints.complete', ['project' => $project, 'sprint' => $project->sprint]) }}",
+          method: 'POST',
+          data: {
+            _token: '{{ csrf_token() }}',
+            _method: 'PUT',
+          },
+          success: function (response) {
+            console.log(response);
+            window.location.reload();
+          },
+          error: function (error) {
+            console.error(error);
+          }
+        })
+      });
+    }
+
     function deleteTask (taskId) {
       swal({
         text: 'Are you sure to delete this task?',
@@ -243,6 +265,7 @@
             data: {
               _token: '{{ csrf_token() }}',
               _method: 'PUT',
+              page: 'backlog',
               type: parent,
               order: data
             }

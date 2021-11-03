@@ -3,19 +3,19 @@
 @section('__content')
   {{ Breadcrumbs::render('project', $project) }}
   <div class="boards-container">
-    <div class="status-group-board">
+    <div class="status-group-board" id="no-status">
       <h5>No Status</h5>
-      @foreach ($project->sprint->tasks as $task)
-        <div class="todo" draggable="true">
+      @foreach ($project->sprint->noStatusTasks as $task)
+        <div class="todo">
           {{ $task->title }}
         </div>
       @endforeach
     </div>
     @foreach ($project->statusGroups as $group)
-      <div class="status-group-board">
+      <div class="status-group-board" id="{{ $group->id }}">
         <h5>{{ $group->name }}</h5>
         @foreach ($group->tasks as $task)
-          <div class="todo" draggable="true">
+          <div class="todo">
             {{ $task->title }}
           </div>
         @endforeach
@@ -26,47 +26,24 @@
 
 @section('__scripts')
   <script>
-    let todos = document.querySelectorAll('.todo');
-    let statuses = document.querySelectorAll('.status-group-board');
-    let selectedTodo = null;
+    $('.status-group-board').sortable({
+      connectWith: '.status-group-board',
+      update: function (event, ui) {
+        let parent = ui.item.parent().get(0).id;
+        let data = $(`#${parent}`).sortable('toArray');
 
-    todos.forEach(todo => {
-      todo.addEventListener('dragstart', dragStart);
-      todo.addEventListener('dragend', dragEnd);
-    });
-
-    statuses.forEach(status => {
-      status.addEventListener('dragover', dragOver);
-      status.addEventListener('dragenter', dragEnter);
-      status.addEventListener('dragleave', dragLeave);
-      status.addEventListener('drop', drop);
+        $.ajax({
+          url: "{{ route('projects.tasks.update', ['project' => $project]) }}",
+          method: 'POST',
+          data: {
+            _token: '{{ csrf_token() }}',
+            _method: 'PUT',
+            page: 'boards',
+            status_group: parent,
+            order: data
+          }
+        })
+      }
     })
-
-    function dragStart () {
-      selectedTodo = this;
-      console.log('dragstart');
-    }
-
-    function dragEnd () {
-      selectedTodo = null;
-      console.log('dragend');
-    }
-
-    function dragOver (e) {
-      e.preventDefault();
-    }
-    
-    function dragEnter () {
-      console.log('dragenter');
-    }
-
-    function dragLeave () {
-      console.log('dragleave');
-    }
-
-    function drop () {
-      this.appendChild(selectedTodo);
-      console.log('dropped');
-    }
   </script>
 @endsection

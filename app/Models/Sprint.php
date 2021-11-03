@@ -13,7 +13,17 @@ class Sprint extends Model
         'name',
         'from',
         'to',
+        'is_completed',
         'created_by'
+    ];
+
+    protected $casts = [
+        'is_completed' => 'boolean'
+    ];
+
+    protected $dates = [
+        'from',
+        'to'
     ];
 
     public function creator () {
@@ -22,6 +32,10 @@ class Sprint extends Model
 
     public function tasks () {
         return $this->hasMany(Task::class)->orderBy('order', 'ASC');
+    }
+
+    public function noStatusTasks () {
+        return $this->hasMany(Task::class)->whereNull('status_group_id')->orderBy('order', 'ASC');
     }
 
     public function projects () {

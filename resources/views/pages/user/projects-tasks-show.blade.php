@@ -49,6 +49,3 @@
   <h3>Comment Section</h3>
   <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quod, magni.</p>
 @endsection
-
-@section('__scripts') 
-@endsection

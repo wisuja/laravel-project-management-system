@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectSprintRequest;
 use App\Models\Project;
+use App\Models\ProjectStatusGroup;
 use App\Models\Sprint;
 use Illuminate\Http\Request;
 
@@ -80,12 +81,26 @@ class ProjectSprintController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \App\Models\Project $project
+     * @param \App\Models\Sprint $sprint
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Project $project, Sprint $sprint)
     {
-        //
+        $sprint->tasks->update([
+            'sprint_id' => NULL
+        ]);
+
+        $isDoneId = $project->statusGroups()->where('name', 'Done')->value('id');
+        $sprint->tasks->where('status_group_id', $isDoneId)->update([
+            'is_archived' => true,
+        ]);
+
+        $sprint->update([
+            'is_completed' => true,
+        ]);
+
+        return response('Sprint completed');
     }
 
     /**

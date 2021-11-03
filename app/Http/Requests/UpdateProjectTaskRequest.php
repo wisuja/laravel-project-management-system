@@ -24,11 +24,17 @@ class UpdateProjectTaskRequest extends FormRequest
     public function rules()
     {
         return [
+            'page' => ['nullable',
+                        function ($attribute, $value, $fail) {
+                            if (!in_array($value, ['backlog', 'boards']))
+                                $fail('This ' . $attribute . ' is not valid');
+                        }],
             'type' => ['nullable',
                         function ($attribute, $value, $fail) {
                             if (!in_array($value, ['sprint', 'backlog']))
                                 $fail('This ' . $attribute . ' is not valid');
                         }],
+            'status_group' => 'nullable',
             'order' => 'nullable|array',
             'task_type_id' => 'nullable|exists:task_types,id',
             'title' => 'nullable',

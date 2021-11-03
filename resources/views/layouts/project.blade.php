@@ -50,6 +50,9 @@
 @endsection
 
 @section('_scripts')
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
   <script>
     function toggleSidebar () {
       $('#sidebar').toggleClass('d-none');
