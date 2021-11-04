@@ -15,8 +15,8 @@
                         Your Work
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Assigned to me</a>
-                        <a class="dropdown-item" href="#">Recent Work</a>
+                        <a class="dropdown-item" href="{{ route('home') }}">Assigned to me</a>
+                        <a class="dropdown-item" href="{{ route('home') }}">Recent Work</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown mr-1">

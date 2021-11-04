@@ -42,8 +42,36 @@
             </div>
         </div>
         <div class="row mt-5">
-            <div class="col-12">
+            <div class="col-12 table-responsive">
                 <h3 class="font-weight-bold">Assigned to me</h3>
+                <table class="table table-hover w-100 text-center">
+                    <thead>
+                        <tr>
+                            <th>Deadline</th>
+                            <th>Title</th>
+                            <th>Project</th>
+                            <th>Assignor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse (auth()->user()->tasks as $task)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($task->deadline)->diffForHumans() }}</td>
+                                <td>
+                                    <a href="{{ route('projects.tasks.show', ['project' => $task->project, 'task' => $task]) }}">{{ $task->title }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{ route('projects.show', ['project' => $task->project]) }}">{{ $task->project->name }}</a>
+                                </td>
+                                <td>{{ $task->creator->name }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3">No Tasks</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
