@@ -55,6 +55,10 @@ class Project extends Model
                 ['name' => 'Testing', 'project_id' => $model->id],
                 ['name' => 'Bugfixing', 'project_id' => $model->id],
             ]);
+
+            foreach ($model->labels as $label) {
+                $model->creator->skills()->attach($label->id);
+            }
         });
 
         static::updating(function ($query) {
@@ -92,5 +96,9 @@ class Project extends Model
 
     public function sprint () {
         return $this->belongsTo(Sprint::class);
+    }
+
+    public function creator () {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

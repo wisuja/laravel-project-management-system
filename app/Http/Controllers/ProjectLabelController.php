@@ -57,12 +57,16 @@ class ProjectLabelController extends Controller
             if ($exists)
                 abort(400, 'Label already in project');
 
-            ProjectLabel::create([
+            $label = ProjectLabel::create([
                 'name' => $request->name,
                 'project_id' => $project->id
             ]);
 
-            return response('Label successfully added');
+            foreach ($project->members as $user) {
+                $user->skills()->attach($label->id);
+            }
+
+            return response($label);
         }
     }
 
@@ -109,9 +113,15 @@ class ProjectLabelController extends Controller
      */
     public function destroy($projectId, $labelId)
     {
+        $project = Project::where('id', $projectId)->first();
+
         ProjectLabel::where('project_id', $projectId)
                     ->where('id', $labelId)
                     ->delete();
+
+        foreach ($project->members as $user) {
+            $user->skills()->detach($labelId);
+        }
 
         return response('Delete success');
     }

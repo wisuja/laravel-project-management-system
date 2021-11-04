@@ -47,27 +47,27 @@
                     <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search" id="search" name="search">
                 </form>
                 <li class="nav-item dropdown">
-                    <a href="#" class="nav-link" id="notifications" role="button" data-toggle="dropdown">
+                    <a onclick="readNotification()" class="nav-link" id="notifications" role="button" data-toggle="dropdown">
                         <i class="fas fa-bell"></i>
-                        <span class="notification-badge"></span>
+                        @if (count(auth()->user()->unreadNotifications) > 0)
+                            <span class="notification-badge"></span>
+                        @endif
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right">
-                        <div class="dropdown-item" id="notification-container">
-                            <img src="https://www.w3schools.com/howto/img_avatar.png" alt="profile">
-                            <p>
-                                <span class="font-weight-bold text-capitalize">Admin</span> assigned you
-                                <a href="#">Task A</a>
-                            </p>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="dropdown-item" id="notification-container">
-                            <img src="https://www.w3schools.com/howto/img_avatar.png" alt="profile">
-                            <p>
-                                <span class="font-weight-bold text-capitalize">Admin</span> assigned you
-                                <a href="#">Task A</a>
-                            </p>
-                        </div>
+                        @forelse (auth()->user()->unreadNotifications as $notification)
+                            <div class="dropdown-item" id="notification-container">
+                                <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Profile picture">
+                                <p>
+                                    <span class="font-weight-bold text-capitalize">{{ $notification->data['username'] }}</span> assigned you
+                                    <a href="{{ $notification->data['task_route'] }}">{{ $notification->data['task_name'] }}</a>
+                                </p>
+                            </div>
+                        @empty
+                            <div class="dropdown-item" id="notification-container">
+                                <p>No new notification</p>
+                            </div>
+                        @endforelse
                     </div>
                 </li>
                 <!-- Authentication Links -->
@@ -77,7 +77,7 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a href="#" class="dropdown-item">Profile</a>
+                        <a href="{{ route('profile.index') }}" class="dropdown-item">Profile</a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">

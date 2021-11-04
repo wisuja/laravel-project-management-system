@@ -63,6 +63,31 @@
       $('#sidebar-toggle span').text(isSidebarOpen ? 'Hide' : 'Expand');
     }
 
+    function completeSprint () {
+      swal({
+        text: 'Are you sure to complete this sprint?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+      }, function () {
+        $.ajax({
+          url: "{{ route('projects.sprints.update', ['project' => $project]) }}",
+          method: 'POST',
+          data: {
+            _token: '{{ csrf_token() }}',
+            _method: 'PUT',
+          },
+          success: function (response) {
+            console.log(response);
+            window.location.reload();
+          },
+          error: function (error) {
+            console.error(error);
+          }
+        })
+      });
+    }
+
     $(function () {
       $('#sidebar-toggle').on('click', toggleSidebar);
     })

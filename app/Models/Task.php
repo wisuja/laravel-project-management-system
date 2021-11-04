@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
@@ -32,6 +33,10 @@ class Task extends Model
 
     protected static function boot () {
         parent::boot();
+
+        static::addGlobalScope('not_archived', function (Builder $builder) {
+            $builder->where('is_archived', false);
+        });
 
         static::creating(function ($query) {
             $latestOrder = Task::where('project_id', $query->project_id)

@@ -23,4 +23,10 @@ class ProjectLabel extends Model
     public function tasks () {
         return $this->hasMany(Task::class, 'label_id');
     }
+
+    public function users () {
+        return $this->belongsToMany(User::class, 'user_skills', 'user_id', 'skill_id')
+                    ->withPivot('level', 'experience')
+                    ->using(UserSkill::class);
+    }
 }

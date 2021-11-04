@@ -8,6 +8,8 @@ use App\Models\Project;
 use App\Models\ProjectLabel;
 use App\Models\Task;
 use App\Models\TaskType;
+use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
 use Illuminate\Http\Request;
 
 class ProjectTaskController extends Controller
@@ -72,6 +74,9 @@ class ProjectTaskController extends Controller
 
         foreach ($request->assigned_to as $userId) {
             $task->assignments()->attach($userId);
+
+            $user = User::where('id', $userId)->first();
+            $user->notify(new TaskAssignedNotification($project, $task, auth()->user()));
         }
 
         foreach ($attachments as $attachment) {
@@ -170,6 +175,9 @@ class ProjectTaskController extends Controller
                 $task->assignments()->updateExistingPivot($task->id, [
                     'user_id' => $userId
                 ]);
+
+                $user = User::where('id', $userId)->first();
+                $user->notify(new TaskAssignedNotification($project, $task, auth()->user()));
             }
     
             $task->attachments()->delete();

@@ -2,26 +2,33 @@
 
 @section('__content')
   {{ Breadcrumbs::render('project', $project) }}
-  <div class="boards-container">
-    <div class="status-group-board" id="no-status">
-      <h5>No Status</h5>
-      @foreach ($project->sprint->noStatusTasks as $task)
-        <div class="todo" id="{{ $task->id }}">
-          {{ $task->title }}
-        </div>
-      @endforeach
+  @if (is_null($project->sprint))
+    <h5>Please start a sprint first</h5>
+  @else
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-primary" onclick="completeSprint()">Complete Sprint</button>
     </div>
-    @foreach ($project->statusGroups as $group)
-      <div class="status-group-board" id="{{ $group->id }}">
-        <h5>{{ $group->name }}</h5>
-        @foreach ($group->tasks as $task)
+    <div class="boards-container">
+      <div class="status-group-board" id="no-status">
+        <h5>No Status</h5>
+        @foreach ($project->sprint->noStatusTasks as $task)
           <div class="todo" id="{{ $task->id }}">
             {{ $task->title }}
           </div>
         @endforeach
       </div>
-    @endforeach
-  </div>
+      @foreach ($project->statusGroups as $group)
+        <div class="status-group-board" id="{{ $group->id }}">
+          <h5>{{ $group->name }}</h5>
+          @foreach ($group->tasks as $task)
+            <div class="todo" id="{{ $task->id }}">
+              {{ $task->title }}
+            </div>
+          @endforeach
+        </div>
+      @endforeach
+    </div>
+  @endif
 @endsection
 
 @section('__scripts')

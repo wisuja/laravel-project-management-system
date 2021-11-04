@@ -63,7 +63,9 @@
               @foreach ($project->statusGroups as $group)
                 <li id="{{ $group->id }}" class="btn btn-light px-1 py-2 my-2 w-100 d-flex justify-content-between align-items-center">
                   <span>{{ $group->name }}</span>
-                  <button type="button" class="close pb-1" onclick="removeGroup({{ $group->id }})">&times;</button>
+                  @if ($group->name != 'Done')
+                    <button  type="button" class="close pb-1" onclick="removeGroup({{ $group->id }})">&times;</button>
+                  @endif
                 </li>
               @endforeach
             </ul>
@@ -305,7 +307,7 @@
             success: function (label) {
               swal({
                 title: 'Success',
-                text: `Successfully add ${label.name} to the team`,
+                text: `Successfully add ${label.name}`,
                 icon: 'success',
                 confirmButtonText: 'Ok'
               });

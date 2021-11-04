@@ -65,6 +65,10 @@ class ProjectMemberController extends Controller
             $user = User::where('name', $user->name)->first();
             $user->projects()->attach($project->id);
 
+            foreach ($project->labels as $label) {
+                $user->skills()->attach($label->id);
+            }
+
             return response($user);
         }
     }
@@ -115,6 +119,9 @@ class ProjectMemberController extends Controller
         $project = Project::whereId($projectId)->firstOrFail();
 
         $project->members()->detach($userId);
+
+        $user = User::whereId($userId)->first();
+        $user->skills()->detach();
 
         if (request()->ajax())
             return response('Delete success', 200);

@@ -45,6 +45,12 @@ class User extends Authenticatable
                     ->using(TaskAssignment::class);
     }
 
+    public function skills () {
+        return $this->belongsToMany(ProjectLabel::class, 'user_skills', 'user_id', 'skill_id')
+                    ->withPivot('level', 'experience')
+                    ->using(UserSkill::class);
+    }
+
     public function taskCreated () {
         return $this->hasMany(Task::class, 'created_by');
     }

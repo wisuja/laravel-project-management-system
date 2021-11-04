@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\ProjectStatusGroup;
 use App\Models\Sprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProjectSprintController extends Controller
 {
@@ -88,9 +89,19 @@ class ProjectSprintController extends Controller
     public function update(Request $request, Project $project)
     {
         $isDoneId = $project->statusGroups()->where('name', 'Done')->value('id');
-        $project->sprint->tasks()->where('status_group_id', $isDoneId)->update([
-            'is_archived' => true,
-        ]);
+        $doneTasks = $project->sprint->tasks()->where('status_group_id', $isDoneId)->get();
+
+        foreach ($doneTasks as $task) {
+            $task->update([
+                'is_archived' => true
+            ]);
+
+            foreach ($task->assignments as $user) {
+                $user->skills()->updateExistingPivot($task->label, [
+                    'experience' => DB::raw('COALESCE(experience, 0) + ' . 500)
+                ]);
+            }
+        }
 
         $project->sprint->tasks()->update([
             'sprint_id' => NULL

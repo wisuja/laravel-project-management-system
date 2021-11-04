@@ -16,11 +16,11 @@ class CreateUserSkillsTable extends Migration
         Schema::create('user_skills', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('skill_id');
-            $table->unsignedBigInteger('level');
-            $table->unsignedBigInteger('experience');
+            $table->unsignedBigInteger('level')->default(1);
+            $table->unsignedBigInteger('experience')->default(0);
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('skill_id')->references('id')->on('skills')->onDelete('cascade');
+            $table->foreign('skill_id')->references('id')->on('project_labels')->onDelete('cascade');
 
             $table->primary(['user_id', 'skill_id']);
         });

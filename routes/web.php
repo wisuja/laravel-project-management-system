@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectLabelController;
 use App\Http\Controllers\ProjectMemberController;
@@ -57,5 +59,12 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{projectId}/labels/{groupId}', [ProjectLabelController::class, 'destroy'])->name('labels.destroy');
         Route::delete('/{projectId}/tasks/{taskId}', [ProjectTaskController::class, 'destroy'])->name('tasks.destroy');
     });
+
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::put('/', [ProfileController::class, 'update'])->name('update');
+    });
+
+    Route::post('/read-notifications', [NotificationController::class, 'store'])->name('read-notifications');
     Route::post('/save-image', [ImageController::class, 'store'])->name('save-image');
 });
