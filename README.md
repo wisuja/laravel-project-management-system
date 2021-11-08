@@ -10,42 +10,42 @@ This project was built to help project managers handle multiple projects at once
 
 -   [x] Register
 -   [x] Login
--   [ ] Dashboard
-    -   [ ] Assigned to me
-    -   [ ] Projects
-        -   [ ] Overview
-            -   [ ] Latest Task
+-   [x] Dashboard
+    -   [x] Assigned to me
+    -   [x] Projects
+        -   [x] Overview
+            -   [x] Latest Task
             -   [ ] Charts
-        -   [ ] Members
+        -   [x] Members
             -   [ ] Role
             -   [ ] Position
             -   [ ] Cross functionality
-        -   [ ] Product Backlog
-            -   [ ] User Requirements
+        -   [x] Product Backlog
+            -   [x] User Requirements
             -   [ ] Project Goal
-        -   [ ] Sprint
-            -   [ ] Set Sprint Duration
-            -   [ ] Kanban board
-                -   [ ] Draggable
-                -   [ ] Task Grouping
-                -   [ ] Task
-                    -   [ ] Title
-                    -   [ ] Description
-                    -   [ ] Assigned To
-                    -   [ ] Time
-                        -   [ ] Estimate time by AI
-                            -   Difficulty
+        -   [x] Sprint
+            -   [x] Set Sprint Duration
+            -   [x] Kanban board
+                -   [x] Draggable
+                -   [x] Task Grouping
+                -   [x] Task
+                    -   [x] Title
+                    -   [x] Description
+                    -   [x] Assigned To
+                    -   [x] Time
+                        -   [x] Estimate time by AI
+                            -   Task Type
                             -   Number of people
-                    -   [ ] Label
+                    -   [x] Label
                         -   [ ] Skill mapping
-                    -   [ ] Attachment
+                    -   [x] Attachment
                     -   [ ] Reminder (?)
                     -   [ ] Comment
                     -   [ ] Link to another task
-                    -   [ ] Status
+                    -   [x] Status
     -   [ ] Star Projects
--   [ ] Profile
+-   [x] Profile
     -   [ ] Skill mapping
         -   [ ] EXP
--   [ ] Notification
+-   [x] Notification
 -   [ ] Activities
