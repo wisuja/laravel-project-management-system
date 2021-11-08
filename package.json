@@ -27,6 +27,7 @@
         "datatables.net-buttons-bs4": "^2.0.1",
         "daterangepicker": "^3.1.0",
         "jquery-ui": "^1.13.0",
+        "moment": "^2.29.1",
         "sweetalert2": "^11.1.9"
     }
 }

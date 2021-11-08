@@ -15,8 +15,10 @@
   @else
     <div class="tasks-container" id="sprint">
       @foreach ($project->sprint->tasks as $task)
-        <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="todo text-decoration-none text-dark d-flex justify-content-between align-items-center" id="{{ $task->id }}">
-          <span>{{ $task->title }}</span>
+        <div class="todo d-flex justify-content-between align-items-center" id="{{ $task->id }}">
+          <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="text-decoration-none text-dark">
+            <span>{{ $task->title }}</span>
+          </a>
           <div class="dropdown">
             <button class="btn btn-sm btn-light" type="button" data-toggle="dropdown">
               <i class="fas fa-ellipsis-h"></i>
@@ -25,7 +27,7 @@
               <span role="button" class="dropdown-item" onclick="deleteTask({{ $task->id }})">Delete</span>
             </div>
           </div>
-        </a>
+        </div>
       @endforeach
     </div>
   @endif
@@ -37,8 +39,10 @@
   </div>
   <div class="tasks-container" id="backlog">
     @foreach ($project->backlog as $task)
-      <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="todo text-decoration-none text-dark d-flex justify-content-between align-items-center" id="{{ $task->id }}">
-        <span>{{ $task->title }}</span>
+      <div class="todo d-flex justify-content-between align-items-center" id="{{ $task->id }}">
+        <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="text-decoration-none text-dark">
+          <span>{{ $task->title }}</span>
+        </a>
         <div class="dropdown">
           <button class="btn btn-sm btn-light" type="button" data-toggle="dropdown">
             <i class="fas fa-ellipsis-h"></i>
@@ -47,7 +51,7 @@
             <span role="button" class="dropdown-item" onclick="deleteTask({{ $task->id }})">Delete</span>
           </div>
         </div>
-      </a>
+      </div>
     @endforeach
   </div>
 
@@ -103,13 +107,13 @@
             <div class="form-group">
               <label for='deadline'>Deadline</label>
               <input type='datetime-local' name='deadline' id='deadline' class='form-control' value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i:s') }}" required>
-              <small>Estimated time: ####</small>
+              <small>Estimated time: <span id="estimated-time" class="font-weight-bold"><i class="fas fa-question-circle"></i></span></small>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" form="form-create-task">Create</button>
+          <button type="submit" class="btn btn-primary" onclick="createTask()">Create</button>
         </div>
       </div>
     </div>
@@ -148,6 +152,37 @@
 
 @section('__scripts')
   <script>
+    function getEstimatedTime () {
+      let taskType = $('#label').val();
+      let numberOfPeoples = $('select[name="assigned_to[]"]').length;
+
+      if (taskType == null || numberOfPeoples < 1)
+        return;
+
+      $.ajax({
+        url: "{{ route('time-estimator.store') }}",
+        method: 'POST',
+        data: {
+          _token: '{{ csrf_token() }}',
+          taskType,
+          numberOfPeoples
+        },
+        success: function ({prediction}) {
+          $('#estimated-time').text(moment().add(prediction, 'minutes').format('LLLL'))
+        },
+        error: function (error) {
+          console.error(error)
+        }
+      })
+    }
+
+    function createTask () {
+      if ($('#estimated-time').text() != '')
+        $('#form-create-task').submit();
+      else
+        getEstimatedTime();
+    }
+
     function deleteTask (taskId) {
       swal({
         text: 'Are you sure to delete this task?',
@@ -209,6 +244,12 @@
           
           $(element).insertBefore(this);
         }
+
+        getEstimatedTime();
+      })
+
+      $('#label').on('change', function () {
+        getEstimatedTime();
       })
 
       $('.description').summernote({

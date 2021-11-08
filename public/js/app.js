@@ -2094,6 +2094,7 @@ __webpack_require__(/*! datatables.net-buttons-bs4 */ "./node_modules/datatables
 __webpack_require__(/*! daterangepicker */ "./node_modules/daterangepicker/daterangepicker.js");
 
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
  * for JavaScript based Bootstrap features such as modals and tabs. This

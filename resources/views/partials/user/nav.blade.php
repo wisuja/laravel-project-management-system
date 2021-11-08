@@ -57,7 +57,6 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         @forelse (auth()->user()->unreadNotifications as $notification)
                             <div class="dropdown-item" id="notification-container">
-                                <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Profile picture">
                                 <p>
                                     <span class="font-weight-bold text-capitalize">{{ $notification->data['username'] }}</span> assigned you
                                     <a href="{{ $notification->data['task_route'] }}">{{ $notification->data['task_name'] }}</a>
