@@ -5,7 +5,11 @@
   @if (is_null($project->sprint))
     <h5>Please start a sprint first</h5>
   @else
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h5 class="mb-0">Current Sprint: {{ $project->sprint->name }}</h5>
+        <span>Duration: {{ $project->sprint->from->format('d-m-Y') }} - {{ $project->sprint->to->format('d-m-Y') }}</span>
+      </div>
       <button type="button" class="btn btn-primary" onclick="completeSprint()">Complete Sprint</button>
     </div>
     <div class="boards-container">

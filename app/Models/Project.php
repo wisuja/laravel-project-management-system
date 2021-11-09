@@ -56,7 +56,7 @@ class Project extends Model
                 ['name' => 'Bugfixing', 'project_id' => $model->id],
             ]);
 
-            foreach ($model->labels as $label) {
+            foreach ($model->labels->where('project_id', $model->id) as $label) {
                 $model->creator->skills()->attach($label->id);
             }
         });

@@ -3,10 +3,11 @@
 @section('__content')
   {{ Breadcrumbs::render('project', $project) }}
   <div class="d-flex justify-content-between align-items-center">
-    <h5>Sprint</h5>
     @if (is_null($project->sprint))
+      <h5>Sprint </h5>
       <button type="button" class="btn btn-primary" data-toggle='modal' data-target='#createSprintModal'>Start Sprint</button>
     @else
+      <h5>Sprint (<span class="font-italic font-weight-normal">{{ $project->sprint->name }}</span>)</h5>
       <button type="button" class="btn btn-primary" onclick="completeSprint()">Complete Sprint</button>
     @endif
   </div>
@@ -113,7 +114,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" onclick="createTask()">Create</button>
+          <button type="submit" class="btn btn-primary" onclick="createTask()" id="btn-create-task">Create</button>
         </div>
       </div>
     </div>
@@ -168,10 +169,12 @@
           numberOfPeoples
         },
         success: function ({prediction}) {
-          $('#estimated-time').text(moment().add(prediction, 'minutes').format('LLLL'))
+          $('#estimated-time').text(moment().add(prediction, 'minutes').format('LLLL'));
+          $('#btn-create-task').prop('disabled', false);
         },
         error: function (error) {
           console.error(error)
+          $('#btn-create-task').prop('disabled', false);
         }
       })
     }
@@ -179,8 +182,10 @@
     function createTask () {
       if ($('#estimated-time').text() != '')
         $('#form-create-task').submit();
-      else
+      else {
+        $('#btn-create-task').prop('disabled', true);
         getEstimatedTime();
+      }
     }
 
     function deleteTask (taskId) {

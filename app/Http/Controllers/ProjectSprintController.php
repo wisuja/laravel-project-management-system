@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectSprintRequest;
 use App\Models\Project;
 use App\Models\ProjectStatusGroup;
+use App\Models\SkillExperience;
 use App\Models\Sprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -90,6 +91,7 @@ class ProjectSprintController extends Controller
     {
         $isDoneId = $project->statusGroups()->where('name', 'Done')->value('id');
         $doneTasks = $project->sprint->tasks()->where('status_group_id', $isDoneId)->get();
+        $skillExperiences = SkillExperience::all();
 
         foreach ($doneTasks as $task) {
             $task->update([
@@ -97,8 +99,14 @@ class ProjectSprintController extends Controller
             ]);
 
             foreach ($task->assignments as $user) {
+                $userSkill = $user->skills()->wherePivot('skill_id', $task->label->id)->first();
+
+                $exp = $userSkill->pivot->experience + 1;
+                $level = $skillExperiences->where('min_exp', '<', $exp)->first()->level;
+
                 $user->skills()->updateExistingPivot($task->label, [
-                    'experience' => DB::raw('COALESCE(experience, 0) + ' . 500)
+                    'experience' => $exp,
+                    'level' => $level
                 ]);
             }
         }

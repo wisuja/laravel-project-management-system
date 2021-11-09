@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
+use App\Models\SkillExperience;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,7 +16,24 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return view('pages.user.profile');
+        $payload = [];
+        $skillExperiences = SkillExperience::all();
+
+        foreach(auth()->user()->skills->groupBy('name') as $skills) {
+            $data = [
+                'name' => $skills->first()->name,
+                'current_exp' => $skills->sum('pivot.experience'),
+            ];
+
+            $data['current_level'] = $skillExperiences->where('min_exp', '<=', $data['current_exp'])->first()->level;
+            $data['level_name'] = $skillExperiences->where('level', $data['current_level'])->first()->name;
+            $data['min_exp'] = $data['current_level'] == 1 ? 0 : $skillExperiences->where('level', $data['current_level'])->first()->min_exp;
+            $data['max_exp'] = $data['current_level'] == 3 ? $data['current_exp'] : $skillExperiences->where('level', $data['current_level'] + 1)->first()->min_exp;
+
+            $payload[] = $data;
+        }
+
+        return view('pages.user.profile', compact('payload'));
     }
 
     /**
