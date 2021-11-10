@@ -46,8 +46,9 @@ class User extends Authenticatable
     }
 
     public function skills () {
-        return $this->belongsToMany(ProjectLabel::class, 'user_skills', 'user_id', 'skill_id')
+        return $this->belongsToMany(Skill::class, 'user_skills', 'user_id', 'skill_id')
                     ->withPivot('level', 'experience')
+                    ->orderBy('experience', 'DESC')
                     ->using(UserSkill::class);
     }
 

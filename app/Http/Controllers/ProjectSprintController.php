@@ -99,12 +99,18 @@ class ProjectSprintController extends Controller
             ]);
 
             foreach ($task->assignments as $user) {
-                $userSkill = $user->skills()->wherePivot('skill_id', $task->label->id)->first();
+                $userSkill = $user->skills()->wherePivot('skill_id', $task->label->skill_id)->first() ?? null;
+
+                if (!$userSkill) {
+                    $user->skills()->attach($task->label->skill_id);
+
+                    $userSkill = $user->skills()->wherePivot('skill_id', $task->label->skill_id)->first();
+                }
 
                 $exp = $userSkill->pivot->experience + 1;
                 $level = $skillExperiences->where('min_exp', '<', $exp)->first()->level;
 
-                $user->skills()->updateExistingPivot($task->label, [
+                $user->skills()->updateExistingPivot($task->label->skill_id, [
                     'experience' => $exp,
                     'level' => $level
                 ]);

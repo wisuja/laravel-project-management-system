@@ -78,7 +78,7 @@ class Task extends Model
     }
 
     public function label () {
-        return $this->belongsTo(ProjectLabel::class, 'label_id');
+        return $this->belongsTo(ProjectLabel::class, 'label_id', 'skill_id');
     }
 
     public function attachments () {

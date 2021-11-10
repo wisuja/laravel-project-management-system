@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectLabelController;
 use App\Http\Controllers\ProjectMemberController;
+use App\Http\Controllers\ProjectMemberRecommenderController;
 use App\Http\Controllers\ProjectSprintController;
 use App\Http\Controllers\ProjectStatusGroupController;
 use App\Http\Controllers\ProjectTaskController;
@@ -44,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{project}/tasks/{task}/edit', [ProjectTaskController::class, 'edit'])->name('tasks.edit');
         Route::get('/{project}/{type?}', [ProjectController::class, 'show'])->name('show');
         Route::post('/', [ProjectController::class, 'store'])->name('store');
+        Route::post('/{project}/members/recommended', [ProjectMemberRecommenderController::class, 'store'])->name('members.recommended.store');
         Route::post('/{project}/members/search', [ProjectMemberController::class, 'store'])->name('members.store');
         Route::post('/{project}/status-groups', [ProjectStatusGroupController::class, 'store'])->name('status-groups.store');
         Route::post('/{project}/labels', [ProjectLabelController::class, 'store'])->name('labels.store');

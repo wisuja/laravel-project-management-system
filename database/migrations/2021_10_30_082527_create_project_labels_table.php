@@ -14,11 +14,13 @@ class CreateProjectLabelsTable extends Migration
     public function up()
     {
         Schema::create('project_labels', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+            $table->unsignedBigInteger('skill_id');
             $table->unsignedBigInteger('project_id');
 
+            $table->foreign('skill_id')->references('id')->on('skills')->onDelete('cascade');
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
+            
+            $table->primary(['skill_id', 'project_id']);
         });
     }
 

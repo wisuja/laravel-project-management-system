@@ -24,7 +24,7 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
-            'name' => 'Project ' . $this->faker->unique()->randomNumber,
+            'name' => 'Project ' . $this->faker->unique()->randomNumber(),
             'code' => 'PRJ',
             'from' => Carbon::now(),
             'to' => Carbon::now()->addWeek(1),

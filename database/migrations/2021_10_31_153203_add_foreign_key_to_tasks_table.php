@@ -17,7 +17,7 @@ class AddForeignKeyToTasksTable extends Migration
             $table->foreign('task_type_id')->references('id')->on('task_types')->onDelete('cascade');
             $table->foreign('sprint_id')->references('id')->on('sprints')->onDelete('set null');
             $table->foreign('status_group_id')->references('id')->on('project_status_groups')->onDelete('set null');
-            $table->foreign('label_id')->references('id')->on('project_labels')->onDelete('set null');
+            $table->foreign('label_id')->references('skill_id')->on('project_labels')->onDelete('set null');
         });
     }
 

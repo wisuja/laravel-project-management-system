@@ -23,6 +23,6 @@ class UserSkill extends Pivot
     }
 
     public function skill () {
-        return $this->belongsTo(ProjectLabel::class, 'skill_id');
+        return $this->belongsTo(Skill::class);
     }
 }

@@ -77,6 +77,15 @@
               </select>
             </div>
             <div class="form-group">
+              <label for='label'>Label</label>
+              <input type='search' name='label' id='label' class='form-control' list="labels" required>
+            </div>
+            <datalist id="labels">
+              @foreach ($project->labels as $label)
+                <option value="{{ $label->name }}">
+              @endforeach
+            </datalist>
+            <div class="form-group">
               <label for='title'>Title</label>
               <input type='text' name='title' id='title' class='form-control' required>
             </div>
@@ -87,24 +96,13 @@
             <div class="form-group">
               <label for='assigned_to'>Assigned to</label>
               <select name='assigned_to[]' id='assigned_to' class='form-control my-1' required>
-                @foreach ($project->members as $member)
-                  <option value="{{ $member->id }}">{{ $member->name }}</option>
-                @endforeach
+                <option>---</option>
               </select>
               <button class="btn btn-light w-100 mt-2 text-left" type="button" id="btn-add-assignee">
                 <i class="fas fa-plus mr-1"></i>
                 Add Assignee
               </button>
             </div>
-            <div class="form-group">
-              <label for='label'>Label</label>
-              <input type='search' name='label' id='label' class='form-control' list="labels" required>
-            </div>
-            <datalist id="labels">
-              @foreach ($project->labels as $label)
-                <option value="{{ $label->name }}">
-              @endforeach
-            </datalist>
             <div class="form-group">
               <label for='deadline'>Deadline</label>
               <input type='datetime-local' name='deadline' id='deadline' class='form-control' value="{{ \Carbon\Carbon::now()->format('Y-m-d\TH:i:s') }}" required>
@@ -153,6 +151,8 @@
 
 @section('__scripts')
   <script>
+    let members = [];
+
     function getEstimatedTime () {
       let taskType = $('#label').val();
       let numberOfPeoples = $('select[name="assigned_to[]"]').length;
@@ -175,6 +175,45 @@
         error: function (error) {
           console.error(error)
           $('#btn-create-task').prop('disabled', false);
+        }
+      })
+    }
+
+    function getRecommendedMembers () {
+      let taskType = $('#label').val();
+
+      if (taskType == null)
+        return;
+
+      members = [];
+
+      $('#assigned_to')
+        .find('option')
+        .remove()
+        .end()
+        .append('<option>---</option>')
+        .val('')
+
+      $.ajax({
+        url: "{{ route('projects.members.recommended.store', ['project' => $project]) }}",
+        method: 'POST',
+        data: {
+          _token: '{{ csrf_token() }}',
+          taskType,
+        },
+        success: function ({recommended: isRecommended, members: recommendedMembers}) {
+          members = recommendedMembers;
+
+          $.each(members, function (i, member) {
+            let text = member.name;
+            if (i == 0 && isRecommended)
+              text += ` (Recommended! Level ${member.level}, EXP ${member.exp})`;
+
+            $('#assigned_to').append(`<option value="${member.id}">${text}</option>`);
+          })
+        },
+        error: function (error) {
+          console.error(error)
         }
       })
     }
@@ -232,7 +271,6 @@
 
     $(function() {
       $('#btn-add-assignee').on('click', function () {
-        let members = @json($project->members);
         let selectedMembers = $('select[name="assigned_to[]"]').map(function () {
           return this.value;
         }).get();
@@ -255,6 +293,7 @@
 
       $('#label').on('change', function () {
         getEstimatedTime();
+        getRecommendedMembers();
       })
 
       $('.description').summernote({

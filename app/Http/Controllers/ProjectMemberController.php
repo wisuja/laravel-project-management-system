@@ -65,10 +65,6 @@ class ProjectMemberController extends Controller
             $user = User::where('name', $user->name)->first();
             $user->projects()->attach($project->id);
 
-            foreach ($project->labels as $label) {
-                $user->skills()->attach($label->id);
-            }
-
             return response($user);
         }
     }

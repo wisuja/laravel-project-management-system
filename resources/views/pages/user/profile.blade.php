@@ -66,7 +66,7 @@
             User's Skills
           </div>
           <div class="card-body pt-1">
-            @foreach ($payload as $skill)
+            @forelse ($skills as $skill)
               <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <p class="lead mb-0">{{ $skill['name'] }}</p>
@@ -77,7 +77,9 @@
                 </div>
                 <small class="d-block text-right">{{ $skill['current_exp'] }} / {{ $skill['max_exp'] }}</small>
               </div>
-            @endforeach
+            @empty
+              <p class="mt-3">You have no skills. Complete tasks to get skills.</p>
+            @endforelse
           </div>
         </div>
       </div>

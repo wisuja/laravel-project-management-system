@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProjectTaskRequest;
 use App\Http\Requests\UpdateProjectTaskRequest;
 use App\Models\Project;
 use App\Models\ProjectLabel;
+use App\Models\Skill;
 use App\Models\Task;
 use App\Models\TaskType;
 use App\Models\User;
@@ -51,15 +52,24 @@ class ProjectTaskController extends Controller
             $attachments[] = $image;
         }
 
-        $labelId = ProjectLabel::where('name', $request->label)
-                                ->where('project_id', $project->id)
-                                ->value('id');
+        $skill = Skill::where('name', $request->label)->first() ?? null;
 
-        if (!$labelId) {
-            $labelId = ProjectLabel::create([
-                'name' => $request->label,
-                'project_id' => $project->id
-            ])->id;
+        if (!$skill) {
+            $skill = Skill::create([
+                'name' => $request->name
+            ]);
+        }
+
+        $projectLabel = ProjectLabel::where('skill_id', $skill->id)
+                                        ->where('project_id', $project->id)
+                                        ->first() ?? null;
+
+        if (!$projectLabel) {
+            $project->labels()->attach($skill->id);
+
+            $projectLabel = ProjectLabel::where('skill_id', $skill->id)
+                                        ->where('project_id', $project->id)
+                                        ->first();
         }
 
         $task = Task::create([
@@ -68,7 +78,7 @@ class ProjectTaskController extends Controller
             'deadline' => $request->deadline,
             'project_id' => $project->id,
             'task_type_id' => $request->task_type_id,
-            'label_id' => $labelId,
+            'label_id' => $projectLabel->skill_id,
             'created_by' => auth()->id(),
         ]);
 
@@ -151,16 +161,25 @@ class ProjectTaskController extends Controller
                 [, $image] = explode('/storage/', $imageUrl);
                 $attachments[] = $image;
             }
-    
-            $labelId = ProjectLabel::where('name', $request->label)
-                                    ->where('project_id', $project->id)
-                                    ->value('id');
-    
-            if (!$labelId) {
-                $labelId = ProjectLabel::create([
-                    'name' => $request->label,
-                    'project_id' => $project->id
-                ])->id;
+
+            $skill = Skill::where('name', $request->label)->first() ?? null;
+
+            if (!$skill) {
+                $skill = Skill::create([
+                    'name' => $request->name
+                ]);
+            }
+
+            $projectLabel = ProjectLabel::where('skill_id', $skill->id)
+                                            ->where('project_id', $project->id)
+                                            ->first() ?? null;
+
+            if (!$projectLabel) {
+                $project->labels()->attach($skill->id);
+
+                $projectLabel = ProjectLabel::where('skill_id', $skill->id)
+                                            ->where('project_id', $project->id)
+                                            ->first();
             }
     
             $task->update([
@@ -168,7 +187,7 @@ class ProjectTaskController extends Controller
                 'description' => $request->description,
                 'deadline' => $request->deadline,
                 'task_type_id' => $request->task_type_id,
-                'label_id' => $labelId,
+                'label_id' => $projectLabel->skill_id,
             ]);
     
             foreach ($request->assigned_to as $userId) {

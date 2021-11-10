@@ -16,24 +16,23 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $payload = [];
+        $skills = [];
         $skillExperiences = SkillExperience::all();
 
-        foreach(auth()->user()->skills->groupBy('name') as $skills) {
+        foreach(auth()->user()->skills as $skill) {
             $data = [
-                'name' => $skills->first()->name,
-                'current_exp' => $skills->sum('pivot.experience'),
+                'name' => $skill->name,
+                'current_exp' => $skill->pivot->experience,
+                'current_level' => $skill->pivot->level,
+                'level_name' => $skillExperiences->where('level', $skill->pivot->level)->first()->name,
+                'min_exp' => $skill->pivot->level == 1 ? 0 : $skillExperiences->where('level', $skill->pivot->level)->first()->min_exp,
+                'max_exp' => $skill->pivot->level == 3 ? $skill->pivot->experience : $skillExperiences->where('level', $skill->pivot->level + 1)->first()->min_exp,
             ];
 
-            $data['current_level'] = $skillExperiences->where('min_exp', '<=', $data['current_exp'])->first()->level;
-            $data['level_name'] = $skillExperiences->where('level', $data['current_level'])->first()->name;
-            $data['min_exp'] = $data['current_level'] == 1 ? 0 : $skillExperiences->where('level', $data['current_level'])->first()->min_exp;
-            $data['max_exp'] = $data['current_level'] == 3 ? $data['current_exp'] : $skillExperiences->where('level', $data['current_level'] + 1)->first()->min_exp;
-
-            $payload[] = $data;
+            $skills[] = $data;
         }
 
-        return view('pages.user.profile', compact('payload'));
+        return view('pages.user.profile', compact('skills'));
     }
 
     /**

@@ -49,15 +49,10 @@ class Project extends Model
                 ['name' => 'In Progress', 'order' => 2, 'project_id' => $model->id],
                 ['name' => 'Done', 'order' => 3, 'project_id' => $model->id],
             ]);
-            $model->labels()->insert([
-                ['name' => 'Dev', 'project_id' => $model->id],
-                ['name' => 'Design', 'project_id' => $model->id],
-                ['name' => 'Testing', 'project_id' => $model->id],
-                ['name' => 'Bugfixing', 'project_id' => $model->id],
-            ]);
 
-            foreach ($model->labels->where('project_id', $model->id) as $label) {
-                $model->creator->skills()->attach($label->id);
+            $skills = Skill::all();
+            foreach($skills as $skill) {
+                $model->labels()->attach($skill->id);
             }
         });
 
@@ -83,7 +78,8 @@ class Project extends Model
     }
 
     public function labels () {
-        return $this->hasMany(ProjectLabel::class);
+        return $this->belongsToMany(Skill::class, 'project_labels', 'project_id', 'skill_id')
+                    ->using(ProjectLabel::class);
     }
 
     public function tasks () {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectLabelRequest;
 use App\Models\Project;
 use App\Models\ProjectLabel;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -50,23 +51,26 @@ class ProjectLabelController extends Controller
     public function store(StoreProjectLabelRequest $request, Project $project)
     {
         if ($request->ajax()) {
-            $exists = ProjectLabel::where('project_id', $project->id)
-                                    ->where('name', $request->name)
-                                    ->exists();
-            
-            if ($exists)
-                abort(400, 'Label already in project');
+            $skill = Skill::where('name', $request->name)->first() ?? null;
 
-            $label = ProjectLabel::create([
-                'name' => $request->name,
-                'project_id' => $project->id
-            ]);
+            if (!$skill)
+                $skill = Skill::create([
+                    'name' => $request->name
+                ]);
+            else {
+                $projectLabelExists = ProjectLabel::whereHas('skill', function ($query) use ($request) {
+                                            return $query->where('name', $request->name);
+                                        })
+                                        ->where('project_id', $project->id)
+                                        ->exists();
 
-            foreach ($project->members as $user) {
-                $user->skills()->attach($label->id);
+                if ($projectLabelExists)
+                    abort(400, 'Label already in project');
             }
 
-            return response($label);
+            $project->labels()->attach($skill->id);
+
+            return response($skill);
         }
     }
 
@@ -113,15 +117,9 @@ class ProjectLabelController extends Controller
      */
     public function destroy($projectId, $labelId)
     {
-        $project = Project::where('id', $projectId)->first();
-
         ProjectLabel::where('project_id', $projectId)
-                    ->where('id', $labelId)
+                    ->where('skill_id', $labelId)
                     ->delete();
-
-        foreach ($project->members as $user) {
-            $user->skills()->detach($labelId);
-        }
 
         return response('Delete success');
     }
