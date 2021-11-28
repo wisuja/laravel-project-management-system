@@ -8,9 +8,11 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectLabelController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\ProjectMemberRecommenderController;
+use App\Http\Controllers\ProjectSearchController;
 use App\Http\Controllers\ProjectSprintController;
 use App\Http\Controllers\ProjectStatusGroupController;
 use App\Http\Controllers\ProjectTaskController;
+use App\Http\Controllers\TaskCommentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -45,12 +47,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{project}/tasks/{task}/edit', [ProjectTaskController::class, 'edit'])->name('tasks.edit');
         Route::get('/{project}/{type?}', [ProjectController::class, 'show'])->name('show');
         Route::post('/', [ProjectController::class, 'store'])->name('store');
+        Route::post('/search', [ProjectSearchController::class, 'store'])->name('search');
         Route::post('/{project}/members/recommended', [ProjectMemberRecommenderController::class, 'store'])->name('members.recommended.store');
         Route::post('/{project}/members/search', [ProjectMemberController::class, 'store'])->name('members.store');
         Route::post('/{project}/status-groups', [ProjectStatusGroupController::class, 'store'])->name('status-groups.store');
         Route::post('/{project}/labels', [ProjectLabelController::class, 'store'])->name('labels.store');
         Route::post('/{project}/tasks', [ProjectTaskController::class, 'store'])->name('tasks.store');
         Route::post('/{project}/sprint', [ProjectSprintController::class, 'store'])->name('sprints.store');
+        Route::post('/{project}/tasks/{task}/comments', [TaskCommentController::class, 'store'])->name('tasks.comments.store');
         Route::put('/', [ProjectController::class, 'update'])->name('update');
         Route::put('/{projectId}/status-groups', [ProjectStatusGroupController::class, 'update'])->name('status-groups.update');
         Route::put('/{project}/tasks/{task?}', [ProjectTaskController::class, 'update'])->name('tasks.update');

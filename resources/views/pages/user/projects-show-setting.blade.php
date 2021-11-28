@@ -1,4 +1,4 @@
-@extends('layouts.project')
+@extends('layouts.project', ['page' => 'setting'])
 
 @section('__content')
   {{ Breadcrumbs::render('project', $project) }}

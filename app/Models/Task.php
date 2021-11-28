@@ -89,6 +89,10 @@ class Task extends Model
         return $this->belongsToMany(User::class, 'task_assignments')->using(TaskAssignment::class);
     }
 
+    public function comments () {
+        return $this->belongsToMany(Comment::class, 'task_comments', 'task_id', 'comment_id')->using(TaskComment::class);
+    }
+
     public function scopeArchived ($query) {
         return $query->where('is_archived', true);
     }

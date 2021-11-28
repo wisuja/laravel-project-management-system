@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
 
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 class Project extends Model
 {
-    use HasFactory, EagerLoadPivotTrait;
+    use HasFactory, EagerLoadPivotTrait, Searchable;
 
     protected $fillable = [
         'name', 
@@ -65,6 +66,11 @@ class Project extends Model
 
     public function getRouteKeyName () {
         return 'slug'; 
+    }
+
+    public function searchableAs()
+    {
+        return 'projects_index';
     }
 
     public function members () {

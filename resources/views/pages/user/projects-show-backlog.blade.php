@@ -1,4 +1,4 @@
-@extends('layouts.project')
+@extends('layouts.project', ['page' => 'backlog'])
 
 @section('__content')
   {{ Breadcrumbs::render('project', $project) }}

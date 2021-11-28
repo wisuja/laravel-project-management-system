@@ -1,4 +1,4 @@
-@extends('layouts.project')
+@extends('layouts.project', ['page' => 'boards'])
 
 @section('__content')
   {{ Breadcrumbs::render('project', $project) }}
@@ -17,7 +17,9 @@
         <h5>No Status</h5>
         @foreach ($project->sprint->noStatusTasks as $task)
           <div class="todo" id="{{ $task->id }}">
-            {{ $task->title }}
+            <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="text-decoration-none text-dark">
+              <span>{{ $task->title }}</span>
+            </a>
           </div>
         @endforeach
       </div>
@@ -26,7 +28,9 @@
           <h5>{{ $group->name }}</h5>
           @foreach ($group->tasks as $task)
             <div class="todo" id="{{ $task->id }}">
-              {{ $task->title }}
+              <a href="{{ route('projects.tasks.show', ['project' => $project, 'task' => $task]) }}" class="text-decoration-none text-dark">
+                <span>{{ $task->title }}</span>
+              </a>
             </div>
           @endforeach
         </div>

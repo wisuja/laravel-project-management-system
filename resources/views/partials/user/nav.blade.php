@@ -42,9 +42,9 @@
 
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
-                <form action="#" method="POST" class="form-inline">
+                <form action="{{ route('projects.search') }}" method="POST" class="form-inline">
                     @csrf
-                    <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search" id="search" name="search">
+                    <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search for project..." id="name" name="name">
                 </form>
                 <li class="nav-item dropdown">
                     <a onclick="readNotification()" class="nav-link" id="notifications" role="button" data-toggle="dropdown">

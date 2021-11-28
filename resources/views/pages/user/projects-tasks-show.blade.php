@@ -1,4 +1,4 @@
-@extends('layouts.project')
+@extends('layouts.project', ['page' => 'backlog'])
 
 @section('title')
   {{  $task->title }}
@@ -46,6 +46,38 @@
     <a href="{{ route('projects.show', ['project' => $project]) }}" class="btn btn-secondary">Back</a>
     <a href="{{ route('projects.tasks.edit', ['project' => $project, 'task' => $task]) }}" class="btn btn-primary">Edit</a>
   </div>
-  <h3>Comment Section</h3>
-  <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quod, magni.</p>
+  <hr>
+  <h6>Comments</h6>
+  @forelse ($task->comments as $comment)
+    <div class="d-flex justify-content-between align-items-center">
+      <p class="font-weight-bold mb-0">{{ $comment->creator->name }}</p>
+      <p class="mb-0">{{ $comment->created_at->diffForHumans() }}</p>
+    </div>
+    <p>{!! $comment->content !!}</p>    
+  @empty
+    <p>No Comment</p>
+  @endforelse
+
+  <form action="{{ route('projects.tasks.comments.store', ['project' => $project, 'task' => $task]) }}" method="POST">
+    @csrf
+    <label for="body">Leave a comment</label>
+    <textarea name="content" id="body" class="form-control"></textarea>
+    <button class="btn btn-primary">Submit</button>
+  </form>
+@endsection
+
+@section('__scripts')
+  <script>
+    $('#body').summernote({
+      minheight: 200,
+      toolbar: [
+        ['control', ['undo', 'redo']],
+        ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+        ['fontsize', ['fontsize']],
+        ['color', ['color']],
+        ['paragraph', ['ul', 'ol', 'paragraph']],
+        ['insert', ['link', 'unlink']],
+      ]
+    });
+  </script>
 @endsection

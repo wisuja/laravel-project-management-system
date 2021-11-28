@@ -1,4 +1,4 @@
-@extends('layouts.project')
+@extends('layouts.project', ['page' => 'backlog'])
 
 @section('title')
   {{  $task->title }}
@@ -41,7 +41,7 @@
     </div>
     <div class="form-group">
       <label for='label'>Label</label>
-      <input type='search' name='label' id='label' class='form-control' list="labels" required value="{{ $task->label->name }}">
+      <input type='search' name='label' id='label' class='form-control' list="labels" required value="{{ $task->label->skill->name }}">
     </div>
     <datalist id="labels">
       @foreach ($project->labels as $label)

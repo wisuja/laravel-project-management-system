@@ -17,19 +17,19 @@
             <span class="font-weight-bold text-capitalize">{{ $project->name }}</span>
           </li>
           <li class="py-2">
-            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'backlog']) }}" class="btn btn-light w-100 text-left">
+            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'backlog']) }}" class="btn btn-light w-100 text-left {{ $page == 'backlog' ? 'active' : '' }}">
               <i class="fas fa-fw fa-tasks mr-1"></i>
               Backlog
             </a>
           </li>
           <li class="py-2">
-            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'boards']) }}" class="btn btn-light w-100 text-left">
+            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'boards']) }}" class="btn btn-light w-100 text-left {{ $page == 'boards' ? 'active' : '' }}">
               <i class="fas fa-fw fa-clipboard mr-1"></i>
               Board
             </a>
           </li>
           <li class="py-2">
-            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'setting']) }}" class="btn btn-light w-100 text-left">
+            <a href="{{ route('projects.show', ['project' => $project, 'type' => 'setting']) }}" class="btn btn-light w-100 text-left {{ $page == 'setting' ? 'active' : '' }}">
               <i class="fas fa-fw fa-cogs mr-1"></i>
               Project Setting
             </a>
@@ -90,6 +90,13 @@
 
     $(function () {
       $('#sidebar-toggle').on('click', toggleSidebar);
+
+      $(window).on('resize', _.debounce(function() {
+        let isSidebarOpen = !$('#sidebar').hasClass('d-none');
+
+        if (isSidebarOpen)
+          toggleSidebar();
+      }, 200));
     })
   </script>
   @yield('__scripts')
