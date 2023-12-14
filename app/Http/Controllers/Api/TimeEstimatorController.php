@@ -47,14 +47,14 @@ class TimeEstimatorController extends Controller
 
         $client = new Client();
 
-        $url = 'https://api-time-estimator.herokuapp.com/';
+        $url = env('TIME_ESTIMATOR_API_ENDPOINT');
         $response = $client->request('POST', $url, [
             'form_params' => [
                 'task_type' => $taskType,
                 'number_of_peoples' => (int) $request->numberOfPeoples
             ]
         ]);
-        
+
         $content = json_decode($response->getBody(), true);
 
         return response($content);
